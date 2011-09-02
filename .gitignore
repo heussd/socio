@@ -1,0 +1,15 @@
+bin/
+target/
+output/
+
+.settings/
+.project
+.classpath
+
+.DS_Store
+*~
+*.swp
+
+
+socio.properties
+store.rdf
