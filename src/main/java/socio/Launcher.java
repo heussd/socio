@@ -65,18 +65,20 @@ public class Launcher {
 				System.in.read();
 				logger.info("Received something, shutting down.");
 			}
-			if (debug) {
-				long timeLimit = System.currentTimeMillis() + 60000;
-				while (true) {
-					Thread.sleep(5000);
-					if (System.currentTimeMillis() > timeLimit) {
-						logger.info("Time limit hit, shutting down.");
-						System.exit(0);
-					} else {
-						logger.info("Time limit will be hit in " + ((timeLimit - System.currentTimeMillis()) / 1000) + " seconds...");
-					}
-				}
-			}
+			
+			System.in.read();
+//			if (debug) {
+//				long timeLimit = System.currentTimeMillis() + 60000;
+//				while (true) {
+//					Thread.sleep(5000);
+//					if (System.currentTimeMillis() > timeLimit) {
+//						logger.info("Time limit hit, shutting down.");
+//						System.exit(0);
+//					} else {
+//						logger.info("Time limit will be hit in " + ((timeLimit - System.currentTimeMillis()) / 1000) + " seconds...");
+//					}
+//				}
+//			}
 		} catch (Exception e) {
 			logger.error("Error(s) occured", e);
 		}

@@ -306,6 +306,16 @@ public class Semantics {
 		return QueryFactory.parse(query, queryString, null, Syntax.syntaxSPARQL);
 	}
 
+	public Query buildTagCountSubquery(String tag) {
+		Query query = QueryFactory.make();
+		query.setPrefixMapping(prefixMapping);
+
+		String queryString = queries.getProperty("query.tagcount").replaceAll("###tag###", tag);
+		;
+		logger.debug("Query is " + queryString);
+		return QueryFactory.parse(query, queryString, null, Syntax.syntaxARQ);
+	}
+
 	public String constructExportModel(Model model) {
 		Model export = createDefaultModel();
 		export.add(constructValidModel(model, Config.getInstance().getXmppUserId()));

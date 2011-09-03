@@ -6,6 +6,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -346,12 +347,12 @@ public class SemanticCore {
 	 * 
 	 * TODO: make uri param of type URI
 	 */
-	public List<String> queryTagsForUri(String uri, Boolean ownTagsOnly) {
+	public List<String> queryTagsForUri(String uri, Boolean ownFlag) {
 		List<String> result = new ArrayList<String>();
 
 		QueryExecution qexec = null;
 		try {
-			qexec = QueryExecutionFactory.create(semantics.buildUriQuery(uri, ownTagsOnly), rdfStore);
+			qexec = QueryExecutionFactory.create(semantics.buildUriQuery(uri, ownFlag), rdfStore);
 
 			ResultSet results = qexec.execSelect();
 
@@ -411,5 +412,57 @@ public class SemanticCore {
 		model.write(stringWriter, Semantics.RDF_EXPORT_FORMAT);
 
 		return stringWriter.toString();
+	}
+
+	public HashMap<String, Integer> queryRelatedUris(URI resource, Boolean ownFlag) {
+		HashMap<String, Integer> result = new HashMap<String, Integer>();
+
+		// 1. Retrieve current tags for this resource
+		List<String> tags = queryTagsForUri(resource.toString(), ownFlag);
+
+		logger.debug("Tag associated with " + resource + ": " + tags);
+
+		// 2. Count associated urls for each tags
+		for (String tag : tags) {
+
+			Query query = semantics.buildTagCountSubquery(tag);
+
+			QueryExecution qexec = null;
+			try {
+				qexec = QueryExecutionFactory.create(query, rdfStore);
+
+				ResultSet results = qexec.execSelect();
+
+				for (; results.hasNext();) {
+					QuerySolution rb = results.nextSolution();
+
+					System.out.println("R: " + rb);
+					String url = rb.get("resource").toString();
+
+					/**
+					 * FIXME This is quite dirty
+					 * 
+					 * Query result is the string
+					 * "1^^http://www.w3.org/2001/XMLSchema#integer"
+					 */
+					Integer count = new Integer(rb.get("count").toString().split("\\^\\^")[0]);
+
+					// try to get current count
+					Integer currentCount = result.get(url);
+					if (currentCount == null) {
+						result.put(url, count);
+					} else {
+						result.put(url, currentCount + count);
+					}
+				}
+			} catch (Exception e) {
+				logger.error("Error while executing query:", e);
+			} finally {
+				if (qexec != null)
+					qexec.close();
+			}
+
+		}
+		return result;
 	}
 }
