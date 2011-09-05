@@ -36,7 +36,7 @@ public interface SocIoRestApi {
 	public Response knows(@QueryParam("uri") @DefaultValue("") String uri);
 
 	@GET
-	@Path("/add")
+	@Path("/addUser")
 	/**
 	 * Adds the specified user to the XMPP client. 
 	 */
@@ -66,4 +66,8 @@ public interface SocIoRestApi {
 	 * Add tags to a certain resource
 	 */
 	public Response addTag(@QueryParam("uri") @DefaultValue("") String uri, @QueryParam("tag") @DefaultValue("") String tag);
+
+	@GET
+	@Path("/queryRelated")
+	public Response queryRelated(@QueryParam("uri") @DefaultValue("") String uri, @QueryParam("own") @DefaultValue("true") Boolean ownFlag);
 }

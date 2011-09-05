@@ -37,10 +37,6 @@ public class XmppClient {
 	}
 
 	private static Logger logger = Logger.getLogger(XmppClient.class);
-	// private static PacketTypeFilter messagePacketTypeFilter = new
-	// PacketTypeFilter(Message.class);
-	// private static PacketTypeFilter messagePacketTypeFilter = new
-	// PacketTypeFilter(Subsc.class);
 
 	/**
 	 * SocIOs primary packet listener. Passes all received messages to the
@@ -52,12 +48,16 @@ public class XmppClient {
 			// We only want messages below this point
 			if (packet instanceof Message) {
 				Message message = (Message) packet;
-				for (Body body : message.getBodies()) {
-					if (body != null) {
-						logger.info("Received message from " + message.getFrom());
 
-						SemanticCore.getInstance().passXmppMessage(body.getMessage(), message.getFrom());
+				if (!message.getFrom().equals(Config.getInstance().getXmppUserId())) {
+					for (Body body : message.getBodies()) {
+						if (body != null) {
+							logger.info("Received message from " + message.getFrom());
+							SemanticCore.getInstance().passXmppMessage(body.getMessage(), "xmpp://" + message.getFrom());
+						}
 					}
+				} else {
+					logger.warn("Congratulations! You just sent a message to yourself!");
 				}
 			}
 		}
@@ -103,7 +103,7 @@ public class XmppClient {
 			if (connection.getRoster().getEntries().size() == 0)
 				logger.warn("There are no entries on the roster");
 
-			logger.info("Starting XMPP packet listener...");
+			logger.debug("Starting XMPP packet listener...");
 			connection.addPacketListener(SOCIO_PACKET_LISTENER, new PacketTypeFilter(Message.class));
 
 			logger.debug("XMPP subscription mode = " + connection.getRoster().getSubscriptionMode());
@@ -144,9 +144,18 @@ public class XmppClient {
 	}
 
 	public boolean addUser(String jabberId) {
+		jabberId = jabberId.trim().replaceAll("'", "");
+
+		// Do basic checks
+		if (!Config.getInstance().isValidXmppId(jabberId)) {
+			logger.warn("Invalid XMPP ID: " + jabberId);
+			return false;
+		}
+
+		logger.debug("Adding new user " + jabberId + " ...");
 		try {
 			// FIXME: Set a group for the new user.
-			connection.getRoster().createEntry(jabberId, jabberId, new String[] { "default" });
+			connection.getRoster().createEntry(jabberId.replaceAll("xmpp://", ""), jabberId, new String[] { "default" });
 			return true;
 		} catch (Exception e) {
 			logger.error("Could not add user to roster:", e);

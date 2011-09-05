@@ -62,14 +62,14 @@ public class SemanticCore {
 
 		rdfStore = semantics.createDefaultModel();
 
-		logger.info("Registering shutdown hook...");
+		logger.debug("Registering shutdown hook...");
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {
 				SemanticCore.getInstance().shutdown();
 			}
 		});
 
-		logger.info("Reading RDF store from file...");
+		logger.debug("Reading RDF store from file...");
 		if (RDF_STORAGE_FILE.exists()) {
 			rdfStore.read(RDF_STORAGE_FILE.toURI().toString(), Semantics.RDF_EXPORT_FORMAT);
 		} else {
@@ -92,6 +92,7 @@ public class SemanticCore {
 			storeNeedsWrite = true;
 		}
 
+		logger.info("Semantic core is up.");
 	}
 
 	private void persistStore() {
@@ -422,7 +423,7 @@ public class SemanticCore {
 
 		logger.debug("Tag associated with " + resource + ": " + tags);
 
-		// 2. Count associated urls for each tags
+		// 2. Count associated urls for each tag
 		for (String tag : tags) {
 
 			Query query = semantics.buildTagCountSubquery(tag);
@@ -435,24 +436,25 @@ public class SemanticCore {
 
 				for (; results.hasNext();) {
 					QuerySolution rb = results.nextSolution();
-
-					System.out.println("R: " + rb);
 					String url = rb.get("resource").toString();
 
-					/**
-					 * FIXME This is quite dirty
-					 * 
-					 * Query result is the string
-					 * "1^^http://www.w3.org/2001/XMLSchema#integer"
-					 */
-					Integer count = new Integer(rb.get("count").toString().split("\\^\\^")[0]);
+					// Ignore the original URL, which is of course highly
+					// related with itself.
+					if (!url.equals(resource.toString())) {
+						/**
+						 * FIXME This is quite dirty (as the query result is a
+						 * string like
+						 * "1^^http://www.w3.org/2001/XMLSchema#integer"
+						 */
+						Integer count = new Integer(rb.get("count").toString().split("\\^\\^")[0]);
 
-					// try to get current count
-					Integer currentCount = result.get(url);
-					if (currentCount == null) {
-						result.put(url, count);
-					} else {
-						result.put(url, currentCount + count);
+						// Increment the rating
+						Integer currentCount = result.get(url);
+						if (currentCount == null) {
+							result.put(url, count);
+						} else {
+							result.put(url, currentCount + count);
+						}
 					}
 				}
 			} catch (Exception e) {

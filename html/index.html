@@ -1,0 +1,109 @@
+<!doctype html>
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title></title>
+  <meta name="description" content="">
+  <meta name="author" content="Timm Heuss">
+
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <link rel="stylesheet" href="jquery-ui-1.8.16.custom/development-bundle/themes/smoothness/jquery.ui.all.css">
+  <link rel="stylesheet" href="css3-buttons/css/buttons.css" type="text/css" media="screen">
+  <link rel="stylesheet" href="css/socio.css">
+ </head>
+
+<body>
+	<!--<div class="ui-widget">
+		<div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"> 
+			<p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span> 
+			<strong>Alert:</strong> SocIO did not respond.</p>
+		</div>
+	</div>-->
+
+	<!--<div id="currentUrl">
+		unknown
+  </div>-->
+
+
+<div id="radioset" class="ui-buttonset">
+  <!--<input type="radio" id="radio1" name="radio" class="ui-helper-hidden-accessible">-->
+  <label for="radio1" aria-pressed="true" class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-left ui-state-active" role="button" aria-disabled="false">
+    <span class="ui-button-text">Tag</span>
+  </label>
+
+  <label for="radio2" class="ui-button ui-widget ui-state-default ui-button-text-only" aria-pressed="false" role="button" aria-disabled="false">
+    <span class="ui-button-text"><a href="related.html">Related</a></span>
+  </label>
+  <label for="radio3" aria-pressed="false" class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-right" role="button" aria-disabled="false">
+    <span class="ui-button-text"><a href="peer.html">Peer</a></span>
+  </label>
+</div>
+  
+
+	<div class="halfpanel">
+    <form id="newtagform">
+      <button class="cupid-green">
+      <input id="newTag" class="add"/>
+    </button>
+    </form>
+		<ul class="allmytags"/>
+	</div>
+	<div class="halfpanel">
+		<ul class="allforeigntags"/>
+	</div>
+	
+	
+  <script src="jquery-ui-1.8.16.custom/js/jquery-1.6.2.min.js"></script>
+  <script src="jquery-ui-1.8.16.custom/js/jquery-ui-1.8.16.custom.min.js"></script>
+  
+  <script src="js/socio.js"></script>
+
+  <script>
+  		$(function() {
+			$( '#newtagform' ).submit(function() {
+				addNewTag($('#newTag').val());
+				$('#newTag').val("");
+				buildTagList();
+				setTimeout(buildTagList,1000);
+				return false;
+			});
+
+			$( "#newTag" ).autocomplete({
+				source: "http://localhost:8080/socio/rest/queryTag",
+				minLength: 2,
+				select: function( event, ui ) {
+				addNewTag(this.value);
+			}
+			});
+        
+        
+        
+  			try {
+  				chrome.tabs.getSelected(null,function(tab) {
+  					start(tab.url);
+  				});
+  			} catch(err) {
+  				// Fallback option, hardcode your URL here
+  				start("https://www.fbi.h-da.de/");
+  			}
+  		});
+        
+        function start(url) {
+            $currentUrl = url;
+            
+            buildTagList();
+            setTimeout(buildTagList,1000);
+            
+            $('#newTag').focus();
+        }
+
+  </script>
+  
+</body>
+</html>

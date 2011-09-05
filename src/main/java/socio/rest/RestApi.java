@@ -1,6 +1,12 @@
 package socio.rest;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeSet;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
@@ -89,5 +95,41 @@ public class RestApi implements SocIoRestApi {
 		logger.debug("Add tag " + tag + " to resource " + uri);
 		SemanticCore.getInstance().addTags(uri, new String[] { tag });
 		return CorsResponse.ok();
+	}
+
+	@Override
+	public Response queryRelated(String uri, Boolean ownFlag) {
+		try {
+			return CorsResponse.ok(new JSONObject(sortHashMap(SemanticCore.getInstance().queryRelatedUris(new URI(uri), ownFlag))));
+		} catch (Exception e) {
+			logger.error("Could not query related uris:", e);
+		}
+		return CorsResponse.badRequest();
+	}
+
+	/**
+	 * http://www.lampos.net/how-to-sort-hashmap
+	 * 
+	 * @param input
+	 * @return
+	 */
+	private HashMap<String, Integer> sortHashMap(HashMap<String, Integer> input) {
+		Map<String, Integer> tempMap = new HashMap<String, Integer>();
+		for (String wsState : input.keySet()) {
+			tempMap.put(wsState, input.get(wsState));
+		}
+
+		List<String> mapKeys = new ArrayList<String>(tempMap.keySet());
+		List<Integer> mapValues = new ArrayList<Integer>(tempMap.values());
+		HashMap<String, Integer> sortedMap = new LinkedHashMap<String, Integer>();
+		TreeSet<Integer> sortedSet = new TreeSet<Integer>(mapValues);
+		Object[] sortedArray = sortedSet.toArray();
+		int size = sortedArray.length;
+		for (int i = 0; i < size; i++) {
+			sortedMap.put(mapKeys.get(mapValues.indexOf(sortedArray[i])), (Integer) sortedArray[i]);
+		}
+
+		logger.debug("Sorted: " + sortedMap);
+		return sortedMap;
 	}
 }

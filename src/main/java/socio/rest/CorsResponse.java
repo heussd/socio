@@ -2,6 +2,8 @@ package socio.rest;
 
 import javax.ws.rs.core.Response;
 
+import org.json.JSONObject;
+
 /**
  * This class helps to build special Cross-Origin Resource Sharing (CORS,
  * {@link http://www.w3.org/TR/cors/}) headers into HTTP response. CORS enables
@@ -25,6 +27,10 @@ public class CorsResponse {
 	 */
 	public static Response ok(Boolean object) {
 		return ok(object ? "true" : "false");
+	}
+
+	public static Response ok(JSONObject jsonObject) {
+		return ok(jsonObject.toString());
 	}
 
 	public static Response badRequest() {

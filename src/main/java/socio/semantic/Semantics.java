@@ -311,7 +311,6 @@ public class Semantics {
 		query.setPrefixMapping(prefixMapping);
 
 		String queryString = queries.getProperty("query.tagcount").replaceAll("###tag###", tag);
-		;
 		logger.debug("Query is " + queryString);
 		return QueryFactory.parse(query, queryString, null, Syntax.syntaxARQ);
 	}
