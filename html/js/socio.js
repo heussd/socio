@@ -78,7 +78,7 @@ function buildRelatedList() {
 	  var items = [];
 	  
 	  $.each(data, function(key, val) {
-	    items.push('<li id="' + key + '"><span class="hiddenvalue">' + val + '</span><a href="' + key + '" class="relatedurl" onclick="openUrl(\'' + key + '\'); setTimeout(1000, buildRelatedList());">' + key + '</a> <div class="progress"><div style="width:' + ( val  * 100 ) + '%; ">&nbsp;</div></div></li>');
+	    items.push('<li id="' + key + '"><span class="hiddenvalue">' + val + '</span><a href="' + key + '" class="relatedurl" onclick="openUrl(\'' + key + '\'); window.close();">' + key + '</a> <div class="progress"><div style="width:' + ( val  * 100 ) + '%; ">&nbsp;</div></div></li>');
 	  });
 	  
 	  
