@@ -91,18 +91,32 @@ public class SemanticCore {
 			logger.info("Store is empty. Inserting some demo triples...");
 
 			rdfStore.add(semantics.constructDemoMessageModel());
-			storeNeedsWrite = true;
+			persistStore(true);
 		}
 
 		logger.info("Semantic core is up.");
 	}
 
+	private void persistStore(Boolean force) {
+		storeNeedsWrite = true;
+		persistStore();
+	}
+
 	private void persistStore() {
-		try {
-			logger.debug("Persisting store...");
-			rdfStore.write(new FileOutputStream(RDF_STORAGE_FILE), Semantics.RDF_EXPORT_FORMAT);
-		} catch (Exception e) {
-			logger.fatal("Failed to store RDF:", e);
+		if (storeNeedsWrite) {
+			if (!Config.getInstance().isReadonly()) {
+				try {
+					logger.debug("Persisting store...");
+
+					rdfStore.write(new FileOutputStream(RDF_STORAGE_FILE), Semantics.RDF_EXPORT_FORMAT);
+				} catch (Exception e) {
+					logger.fatal("Failed to store RDF:", e);
+				}
+			} else {
+				logger.warn("Store is readonly and will therefor not be written.");
+			}
+		} else {
+			logger.info("Store does not need to be persisted.");
 		}
 	}
 
@@ -111,13 +125,9 @@ public class SemanticCore {
 	 */
 	protected void shutdown() {
 		logger.info("Shutdown received.");
-		if (storeNeedsWrite) {
-			persistStore();
-		} else {
-			logger.info("Store does not need to be persisted.");
-		}
-		logger.info("Shutting down...");
 
+		persistStore();
+		logger.info("Shutting down...");
 	};
 
 	public void testQuery() {
@@ -182,8 +192,7 @@ public class SemanticCore {
 	public void persistStatements(Model model, Boolean silent) {
 		if (!model.isEmpty()) {
 			rdfStore.add(model);
-			storeNeedsWrite = true;
-			persistStore();
+			persistStore(true);
 
 			if (!silent) {
 				XmppClient.getInstance().broadcast(semantics.constructExportModel(model));
@@ -269,7 +278,7 @@ public class SemanticCore {
 	public SemanticCore clear() {
 		logger.warn("Clearing content store...");
 		rdfStore.remove(rdfStore);
-		storeNeedsWrite = true;
+		persistStore(true);
 		return this;
 	}
 

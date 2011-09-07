@@ -26,6 +26,12 @@ public class Config {
 
 	private Properties properties;
 
+	private Boolean headless;
+
+	private Boolean debug;
+
+	private Boolean readonly;
+
 	private Config() {
 		this.properties = new Properties();
 		loadConfig();
@@ -158,21 +164,57 @@ public class Config {
 	}
 
 	public Boolean isHeadless() {
-		String headless = properties.getProperty("headless");
+		if (headless == null) {
+			String headlessString = properties.getProperty("headless");
 
-		if (headless == null)
-			return false;
+			if (headlessString == null)
+				headless = false;
 
-		return "true".equals(headless);
+			headless = "true".equals(headlessString);
+		}
+		return headless;
 	}
 
 	public Boolean isDebug() {
-		String debug = properties.getProperty("debug");
+		if (debug == null) {
+			String debugString = properties.getProperty("debug");
 
-		if (debug == null)
-			return false;
+			if (debugString == null)
+				debug = false;
 
-		return "true".equals(debug);
+			debug = "true".equals(debugString);
+		}
+		return debug;
+	}
+
+	public void takeParameters(String[] args) {
+		for (String parameter : args) {
+			if ("headless".equals(parameter)) {
+				logger.info("Manual override: Headless mode enabled.");
+				headless = true;
+			} else if ("debug".equals(parameter)) {
+				logger.info("Manual override: Debug mode enabled.");
+				debug = true;
+			} else if ("readonly".equals(parameter)) {
+				logger.info("Manual override: Readonly mode enabled.");
+				readonly = true;
+			} else {
+				logger.warn("Unrecognised parameter " + parameter + " was ignored.");
+			}
+
+		}
+	}
+
+	public boolean isReadonly() {
+		if (readonly == null) {
+			String string = properties.getProperty("readonly");
+
+			if (string == null)
+				readonly = false;
+
+			readonly = "true".equals(string);
+		}
+		return readonly;
 	}
 
 }
