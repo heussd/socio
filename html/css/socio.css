@@ -98,9 +98,27 @@ a.tag {
 }
 
 #newPeer {
-border: 1px solid grey;
-margin:5px;
+	border: 1px solid grey;
+	margin:5px;
 }
+
+.progress{
+	position:absolute;
+	right: 5px;
+	border: 1px solid gray;
+	width:100px;
+	margin: 0px;
+	margin-top:-10px;
+	padding: 0px;
+}
+.progress div {
+	background: #76b347;
+	margin: 0px;a
+	width:0%;
+	padding: 0px;
+}
+
+
 
 /*
  * CSS3-buttons modifications
@@ -121,6 +139,9 @@ button.cupid-green, button.clean-gray {
 }
 #radioset * {
   font-size: 10pt;
+}
+#radioset label span a {
+  font-weight: normal;
 }
 .ui-autocomplete {
   font-size: 9pt;

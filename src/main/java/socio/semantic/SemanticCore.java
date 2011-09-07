@@ -7,7 +7,9 @@ import java.io.StringWriter;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
@@ -415,11 +417,12 @@ public class SemanticCore {
 		return stringWriter.toString();
 	}
 
-	public HashMap<String, Integer> queryRelatedUris(URI resource, Boolean ownFlag) {
-		HashMap<String, Integer> result = new HashMap<String, Integer>();
+	public HashMap<String, Float> queryRelatedUris(URI resource, Boolean ownFlag) {
+		HashMap<String, Float> result = new HashMap<String, Float>();
 
 		// 1. Retrieve current tags for this resource
 		List<String> tags = queryTagsForUri(resource.toString(), ownFlag);
+		Integer numberOfTags = tags.size();
 
 		logger.debug("Tag associated with " + resource + ": " + tags);
 
@@ -446,10 +449,10 @@ public class SemanticCore {
 						 * string like
 						 * "1^^http://www.w3.org/2001/XMLSchema#integer"
 						 */
-						Integer count = new Integer(rb.get("count").toString().split("\\^\\^")[0]);
+						Float count = new Float(rb.get("count").toString().split("\\^\\^")[0]);
 
 						// Increment the rating
-						Integer currentCount = result.get(url);
+						Float currentCount = result.get(url);
 						if (currentCount == null) {
 							result.put(url, count);
 						} else {
@@ -464,6 +467,14 @@ public class SemanticCore {
 					qexec.close();
 			}
 
+		}
+
+		// 3. Make scores relative
+		Iterator<Entry<String, Float>> iterator = result.entrySet().iterator();
+		while (iterator.hasNext()) {
+			Entry<String, Float> entry = iterator.next();
+
+			result.put(entry.getKey(), (entry.getValue() / numberOfTags));
 		}
 		return result;
 	}

@@ -77,7 +77,7 @@ function buildRelatedList() {
 	  
 	  $.each(data, function(key, val) {
 	  		  	
-	    items.push('<li id="' + key + '"><a href="' + key + '" class="relatedurl">' + key + ' (' + val + ')</a></li>');
+	    items.push('<li id="' + key + '"><a href="' + key + '" class="relatedurl">' + key + '</a> <div class="progress"><div style="width:' + ( val  * 100 ) + '%; ">&nbsp;</div></div></li>');
 	  });
 	  
 	$('<ol/>', {
