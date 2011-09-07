@@ -52,8 +52,12 @@ public class XmppClient {
 				if (!message.getFrom().equals(Config.getInstance().getXmppUserId())) {
 					for (Body body : message.getBodies()) {
 						if (body != null) {
-							logger.info("Received message from " + message.getFrom());
-							SemanticCore.getInstance().passXmppMessage(body.getMessage(), "xmpp://" + message.getFrom());
+							// Sender-name is suffix'd by his resource. Cut it
+							// off.
+							String from = "xmpp://" + message.getFrom().replaceAll("/srp", "");
+
+							logger.info("Received message from " + from);
+							SemanticCore.getInstance().passXmppMessage(body.getMessage(), from);
 						}
 					}
 				} else {
@@ -145,6 +149,9 @@ public class XmppClient {
 
 	public boolean addUser(String jabberId) {
 		jabberId = jabberId.trim().replaceAll("'", "");
+
+		if (!jabberId.startsWith("xmpp://"))
+			jabberId = "xmpp://" + jabberId;
 
 		// Do basic checks
 		if (!Config.getInstance().isValidXmppId(jabberId)) {

@@ -238,6 +238,7 @@ public class Semantics {
 	 * and have timestamps. Invalid models will be consumed silently.
 	 */
 	public Model constructValidModel(Model receivedModel, String user) {
+		logger.debug("Constructing import model for user " + user + " ...");
 		Model result = createDefaultModel();
 
 		if (!receivedModel.isEmpty()) {

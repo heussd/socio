@@ -160,7 +160,8 @@ public class SemanticCore {
 		logger.info("Received message from " + from + ": " + body);
 
 		// Add protocol prefix and remove the resource identifier from userid
-		from = "xmpp://" + from.split("/")[0];
+		if (!from.startsWith("xmpp://"))
+			from = "xmpp://" + from.split("/")[0];
 
 		// Try to parse the received message
 		Model receivedMessage = semantics.createDefaultModel();
