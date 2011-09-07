@@ -62,12 +62,12 @@ function buildTagList() {
 
 function openUrl(url) {
 	try {
-		chrome.tabs.create({'url': chrome.extension.getURL('popup.html')}, function(tab) {
+		chrome.tabs.create({'url': url}, function(tab) {
 		  // Tab opened.
 		});
 	} catch(err) {
-	// Fallback option, hardcode your URL here
-	window.open(url);
+		// Fallback option, hardcode your URL here
+		window.open(url);
 	}	
 }
 
@@ -76,8 +76,7 @@ function buildRelatedList() {
 		 var items = [];
 	  
 	  $.each(data, function(key, val) {
-	  		  	
-	    items.push('<li id="' + key + '"><a href="' + key + '" class="relatedurl">' + key + '</a> <div class="progress"><div style="width:' + ( val  * 100 ) + '%; ">&nbsp;</div></div></li>');
+	    items.push('<li id="' + key + '"><a href="' + key + '" class="relatedurl" onclick="openUrl(\'' + key + '\')">' + key + '</a> <div class="progress"><div style="width:' + ( val  * 100 ) + '%; ">&nbsp;</div></div></li>');
 	  });
 	  
 	$('<ol/>', {
