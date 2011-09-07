@@ -58,6 +58,11 @@ ol.related li {
 ol.related li a {
 	text-decoration: none;
 	color:black;
+	font-weight:normal;
+	color:gray;
+}
+ol.related li a:hover {
+	color:black;
 }
 
 
