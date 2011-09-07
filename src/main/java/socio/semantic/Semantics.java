@@ -173,7 +173,7 @@ public class Semantics {
 	 */
 	public Model constructDemoMessageModel() {
 		try {
-			Model model = makeTagging(new URI("https://www.fbi.h-da.de/"), "Department page", "Computer Science", "University");
+			Model model = makeTagging(new URI("https://www.fbi.h-da.de/"), "Department page", "Computer", "University", "News");
 			return model;
 		} catch (Exception e) {
 			logger.error("Could not construct demo model:", e);

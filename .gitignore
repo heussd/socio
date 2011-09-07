@@ -10,6 +10,8 @@ output/
 *~
 *.swp
 
+*.log*
+socio.log
 
 socio.properties
 store.rdf
