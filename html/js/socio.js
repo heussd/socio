@@ -74,10 +74,21 @@ function openUrl(url) {
 
 function buildRelatedList() {
 	$.getJSON('http://localhost:8080/socio/rest/queryRelated?uri=' + $currentUrl, function(data) {
-		 var items = [];
+	  
+	  var items = [];
 	  
 	  $.each(data, function(key, val) {
-	    items.push('<li id="' + key + '"><a href="' + key + '" class="relatedurl" onclick="openUrl(\'' + key + '\'); setTimeout(1000, buildRelatedList());">' + key + '</a> <div class="progress"><div style="width:' + ( val  * 100 ) + '%; ">&nbsp;</div></div></li>');
+	    items.push('<li id="' + key + '"><span class="hiddenvalue">' + val + '</span><a href="' + key + '" class="relatedurl" onclick="openUrl(\'' + key + '\'); setTimeout(1000, buildRelatedList());">' + key + '</a> <div class="progress"><div style="width:' + ( val  * 100 ) + '%; ">&nbsp;</div></div></li>');
+	  });
+	  
+	  
+	  
+	  
+	  items.sort(function(a, b) {
+	  	
+	  	//alert($(a).children().html);
+	  	//alert( $(a).text() );
+	  	return $(a).text() < $(b).text();
 	  });
 	  
 	$('<ol/>', {
@@ -94,4 +105,54 @@ function addXmppUser($user) {
     $.ajax({ url: "http://localhost:8080/socio/rest/addUser?xmpp='" + $user + "'"});
 }
 
+
+
+
+
+
+jQuery.fn.sortElements = (function(){
+ 
+    var sort = [].sort;
+ 
+    return function(comparator, getSortable) {
+ 
+        getSortable = getSortable || function(){return this;};
+ 
+        var placements = this.map(function(){
+ 
+            var sortElement = getSortable.call(this),
+                parentNode = sortElement.parentNode,
+ 
+                // Since the element itself will change position, we have
+                // to have some way of storing its original position in
+                // the DOM. The easiest way is to have a 'flag' node:
+                nextSibling = parentNode.insertBefore(
+                    document.createTextNode(''),
+                    sortElement.nextSibling
+                );
+ 
+            return function() {
+ 
+                if (parentNode === this) {
+                    throw new Error(
+                        "You can't sort elements if any one is a descendant of another."
+                    );
+                }
+ 
+                // Insert before flag:
+                parentNode.insertBefore(this, nextSibling);
+                // Remove flag:
+                parentNode.removeChild(nextSibling);
+ 
+            };
+ 
+        });
+ 
+        return sort.call(this, comparator).each(function(i){
+            placements[i].call(getSortable.call(this));
+        });
+ 
+    };
+ 
+})();
 
