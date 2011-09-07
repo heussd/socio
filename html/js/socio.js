@@ -2,6 +2,7 @@
 
 function addNewTag($tag) {
   if ($tag == "") return;
+  if ($tag == " ") return;
   $.ajax({ url: "http://localhost:8080/socio/rest/addTag?uri=" + $currentUrl + "&tag='" + $tag + "'"})
 }
 
@@ -47,7 +48,7 @@ function buildTagList() {
 	  
 	  $.each(data, function(key, val) {
 	  		  	
-	    items.push('<li id="' + key + '"><button class="clean-gray"><a href="javascript:addNewTag("' + val + '")">' + val + '</a></button></li>');
+	    items.push('<li id="' + key + '"><button class="clean-gray" onclick="addNewTag(\'' + val + '\');setTimeout(500, buildTagList());">' + val + '</button></li>');
 	  });
 	  
 	$('<ul/>', {
@@ -76,7 +77,7 @@ function buildRelatedList() {
 		 var items = [];
 	  
 	  $.each(data, function(key, val) {
-	    items.push('<li id="' + key + '"><a href="' + key + '" class="relatedurl" onclick="openUrl(\'' + key + '\')">' + key + '</a> <div class="progress"><div style="width:' + ( val  * 100 ) + '%; ">&nbsp;</div></div></li>');
+	    items.push('<li id="' + key + '"><a href="' + key + '" class="relatedurl" onclick="openUrl(\'' + key + '\'); setTimeout(1000, buildRelatedList());">' + key + '</a> <div class="progress"><div style="width:' + ( val  * 100 ) + '%; ">&nbsp;</div></div></li>');
 	  });
 	  
 	$('<ol/>', {
