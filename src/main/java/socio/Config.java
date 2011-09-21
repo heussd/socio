@@ -9,15 +9,35 @@ import org.apache.log4j.Logger;
 public class Config {
 
 	/**
-	 * Implementation of a performance critical, synchronized singleton pattern
+	 * Implementation of a thread safe, synchronized singleton pattern
 	 * {@link http://de.wikibooks.org/wiki/Java_Standard:_Muster_Singleton}.
 	 */
-	private static final class InstanceHolder {
-		static final Config INSTANCE = new Config();
+	private static Config instance;
+
+	public static synchronized Config getInstance() {
+		if (Config.instance == null) {
+			Config.instance = new Config();
+		}
+		return Config.instance;
 	}
 
-	public static Config getInstance() {
-		return InstanceHolder.INSTANCE;
+	/**
+	 * Overrides some values for the automated unit tests.
+	 */
+	public static synchronized Config getTestInstance() {
+		Config.instance = new Config(true) {
+
+			@Override
+			public boolean isReadonly() {
+				return false;
+			}
+
+			@Override
+			public String getXmppUserId() {
+				return "xmpp://user@example.com";
+			}
+		};
+		return Config.instance;
 	}
 
 	private static Logger logger = Logger.getLogger(Config.class);
@@ -32,6 +52,9 @@ public class Config {
 
 	private Boolean readonly;
 
+	/**
+	 * TODO Clean this mess up!
+	 */
 	private Config() {
 		this.properties = new Properties();
 		loadConfig();
@@ -47,7 +70,10 @@ public class Config {
 		logger.debug("Use proxy = " + (useProxy() ? "true" : "false"));
 		logger.debug("Is headless = " + (isHeadless() ? "true" : "false"));
 		logger.debug("Debug mode = " + (isDebug() ? "true" : "false"));
+	}
 
+	private Config(Boolean debug) {
+		logger.info("Config class is in test mode!");
 	}
 
 	private Boolean loadConfig() {

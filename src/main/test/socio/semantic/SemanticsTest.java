@@ -6,6 +6,8 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
+import socio.Config;
+
 import com.hp.hpl.jena.rdf.model.Model;
 
 public class SemanticsTest {
@@ -13,6 +15,8 @@ public class SemanticsTest {
 
 	@Before
 	public void setUp() throws Exception {
+
+		Config.getTestInstance();
 		semantics = new Semantics();
 	}
 
@@ -27,7 +31,7 @@ public class SemanticsTest {
 		model.write(System.out, Semantics.RDF_EXPORT_FORMAT);
 
 		// Try to build a valid import model
-		model = semantics.constructValidModel(model, "xmpp://socio@example.com");
+		model = semantics.constructValidModel(model, Config.getInstance().getXmppUserId());
 		model.write(System.out, Semantics.RDF_EXPORT_FORMAT);
 		assertFalse(model.isEmpty());
 

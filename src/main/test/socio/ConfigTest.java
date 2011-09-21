@@ -11,7 +11,7 @@ public class ConfigTest {
 
 	@Before
 	public void setUp() throws Exception {
-		config = Config.getInstance();
+		config = Config.getTestInstance();
 	}
 
 	@Test

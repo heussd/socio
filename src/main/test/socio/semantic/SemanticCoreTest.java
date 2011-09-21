@@ -11,6 +11,8 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+import socio.Config;
+
 import com.hp.hpl.jena.rdf.model.Model;
 
 public class SemanticCoreTest {
@@ -20,6 +22,8 @@ public class SemanticCoreTest {
 
 	@Before
 	public void setUp() throws Exception {
+		Config.getTestInstance();
+
 		knownSubject = new URI("https://www.fbi.h-da.de/");
 		semantics = new Semantics();
 
@@ -58,7 +62,7 @@ public class SemanticCoreTest {
 		newTags.add("new");
 		newTags.add("test");
 
-		Model model = semantics.makeTagging("testuser", new URI("https://www.fbi.h-da.de/"), newTags);
+		Model model = semantics.makeTagging("xmpp://foreignxmppuser@example.com", knownSubject, newTags);
 		core.persistStatements(model, true);
 
 		core.dumpStore();
@@ -75,7 +79,7 @@ public class SemanticCoreTest {
 	@Test
 	public void testTagQuery() throws Exception {
 		core.clear();
-		core.persistStatements(semantics.constructDemoMessageModel());
+		core.persistStatements(semantics.constructDemoMessageModel(), true);
 
 		List<String> tags = core.queryTagsForPattern("totatllyrandomstringwhichcannotbefound123192839129309182380");
 		System.out.println(tags);
@@ -93,7 +97,7 @@ public class SemanticCoreTest {
 
 	@Test
 	public void testFrom() throws Exception {
-		SemanticCore.getInstance().passXmppMessage("", "spellman@jabber.ccc.de/Psi");
+		SemanticCore.getInstance().passXmppMessage("", Config.getInstance().getXmppUserId());
 	}
 
 	@Test
@@ -103,7 +107,7 @@ public class SemanticCoreTest {
 
 		// Build default environment
 		core.clear();
-		core.persistStatements(semantics.constructDemoMessageModel());
+		core.persistStatements(semantics.constructDemoMessageModel(), true);
 		URI knownSubject = new URI("https://www.fbi.h-da.de/");
 
 		assertTrue(core.hasKnowledgeAbout(knownSubject));

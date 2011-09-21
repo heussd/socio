@@ -173,7 +173,7 @@ public class Semantics {
 	 */
 	public Model constructDemoMessageModel() {
 		try {
-			Model model = makeTagging("xmpp://socio@example.com", new URI("https://www.fbi.h-da.de/"), "Department page", "Computer", "University", "News");
+			Model model = makeTagging(Config.getInstance().getXmppUserId(), new URI("https://www.fbi.h-da.de/"), "Department page", "Computer", "University", "News");
 			return model;
 		} catch (Exception e) {
 			logger.error("Could not construct demo model:", e);
