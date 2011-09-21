@@ -173,7 +173,7 @@ public class Semantics {
 	 */
 	public Model constructDemoMessageModel() {
 		try {
-			Model model = makeTagging(new URI("https://www.fbi.h-da.de/"), "Department page", "Computer", "University", "News");
+			Model model = makeTagging("xmpp://socio@example.com", new URI("https://www.fbi.h-da.de/"), "Department page", "Computer", "University", "News");
 			return model;
 		} catch (Exception e) {
 			logger.error("Could not construct demo model:", e);
@@ -181,13 +181,13 @@ public class Semantics {
 		return null;
 	}
 
-	public Model makeTagging(URI resource, String... strings) {
+	public Model makeTagging(String user, URI resource, String... strings) {
 		// TODO Make this better
 		List<String> list = new ArrayList<String>();
 		for (String string : strings) {
 			list.add(string);
 		}
-		return makeTagging(resource, list);
+		return makeTagging(user, resource, list);
 	}
 
 	public Model makeTagging(URI resource, List<String> strings) {

@@ -65,7 +65,7 @@ public class SemanticCoreTest {
 
 		List<String> tags = core.queryTagsForUri(knownSubject.toString(), true);
 		System.out.println(tags);
-		assertEquals("Own tags", 3, tags.size());
+		assertEquals("Own tags", 4, tags.size());
 
 		tags = core.queryTagsForUri(knownSubject.toString(), false);
 		System.out.println(tags);
@@ -87,7 +87,7 @@ public class SemanticCoreTest {
 
 		tags = core.queryTagsForPattern("");
 		System.out.println(tags);
-		assertEquals(3, tags.size());
+		assertEquals(4, tags.size());
 
 	}
 
