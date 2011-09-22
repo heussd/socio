@@ -42,7 +42,7 @@ public class Tray {
 			MenuItem defaultItem = new MenuItem("Exit");
 			defaultItem.addActionListener(exitListener);
 			popup.add(defaultItem);
-
+			
 			trayIcon = new TrayIcon(image, "SocIO Tray Icon", popup);
 			trayIcon.setImageAutoSize(true);
 
