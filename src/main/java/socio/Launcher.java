@@ -47,7 +47,7 @@ public class Launcher {
 				System.in.read();
 				logger.info("Received something, shutting down.");
 			} else {
-//				new Tray();
+				new Tray();
 			}
 
 			// if (debug) {

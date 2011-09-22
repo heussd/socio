@@ -33,6 +33,11 @@ public class Config {
 			}
 
 			@Override
+			public boolean disableTray() {
+				return true;
+			}
+
+			@Override
 			public String getXmppUserId() {
 				return "xmpp://user@example.com";
 			}
@@ -51,6 +56,8 @@ public class Config {
 	private Boolean debug;
 
 	private Boolean readonly;
+
+	private Boolean disableTray;
 
 	/**
 	 * TODO Clean this mess up!
@@ -241,6 +248,18 @@ public class Config {
 			readonly = "true".equals(string);
 		}
 		return readonly;
+	}
+
+	public boolean disableTray() {
+		if (disableTray == null) {
+			String string = properties.getProperty("disabletray");
+
+			if (string == null)
+				disableTray = false;
+
+			disableTray = "true".equals(string);
+		}
+		return disableTray;
 	}
 
 }
