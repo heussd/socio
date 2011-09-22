@@ -64,7 +64,7 @@ function buildTagList() {
 function openUrl(url) {
 	try {
 		chrome.tabs.create({'url': url}, function(tab) {
-		  // Tab opened.
+      updateAddressbarIcon(tab.url, tab.id);
 		});
 	} catch(err) {
 		// Fallback option, hardcode your URL here
@@ -156,3 +156,33 @@ jQuery.fn.sortElements = (function(){
  
 })();
 
+
+
+
+function updateAddressbarIcon(url, id) {
+  // Catch multiple calls for the same url
+  if (url != lastUrl) {
+    lastUrl = url;
+
+    /*
+    Fire a "What do you know about ...?"-request. The response is
+    a classification of SocIOs knowledge about the given resource:
+     "none"     -   resource is not known
+     "own"      -   the user has already assigned tags to the resource
+     "foreign"  -   other users have already assigned tags to the resource
+     "both"     -   "own" + "foreign"
+    */
+    $.ajax({
+      url:"http://localhost:8080/socio/rest/knows?uri=" + url,
+      success: function(data, status) {
+        try {
+          chrome.pageAction.show(id);
+          chrome.pageAction.setIcon({path: "images/" + data + ".png", tabId: id});
+        }
+        catch(err) {
+          // Todo: Implement fallback for non-Chrome 
+        }
+      }
+   });
+ }
+}

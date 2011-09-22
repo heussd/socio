@@ -1,8 +1,6 @@
 package socio.semantic;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -30,6 +28,36 @@ public class SemanticCoreTest {
 		core = SemanticCore.getInstance();
 		core.clear();
 		core.persistStatements(semantics.constructDemoMessageModel(), true);
+	}
+
+	@Test
+	public void testKnowledge() throws Exception {
+		SemanticCore core = SemanticCore.getInstance();
+		Semantics semantics = new Semantics();
+
+		// Build default environment
+		core.clear();
+		core.persistStatements(semantics.constructDemoMessageModel(), true);
+		URI knownSubject = new URI("https://www.fbi.h-da.de/");
+
+		assertEquals("own", core.classifyKnowledgeAbout(knownSubject));
+		assertEquals("none", core.classifyKnowledgeAbout(new URI("http://www.google.de")));
+
+		URI newUrl = new URI("http://a.totally.random-uri.com");
+
+		// Add foreign tagging
+		Model model = semantics.makeTagging("xmpp://foreignxmppuser@example.com", newUrl, "tag1");
+		core.persistStatements(model, true);
+
+		core.dumpStore();
+		assertEquals("foreign", core.classifyKnowledgeAbout(newUrl));
+
+		// Now make the tagging known by the own user, too
+		model = semantics.makeTagging(Config.getTestInstance().getXmppUserId(), new URI("http://a.totally.random-uri.com"), "tag1");
+		core.persistStatements(model, true);
+
+		assertEquals("both", core.classifyKnowledgeAbout(newUrl));
+
 	}
 
 	@Test
@@ -98,20 +126,6 @@ public class SemanticCoreTest {
 	@Test
 	public void testFrom() throws Exception {
 		SemanticCore.getInstance().passXmppMessage("", Config.getInstance().getXmppUserId());
-	}
-
-	@Test
-	public void testKnowledge() throws Exception {
-		SemanticCore core = SemanticCore.getInstance();
-		Semantics semantics = new Semantics();
-
-		// Build default environment
-		core.clear();
-		core.persistStatements(semantics.constructDemoMessageModel(), true);
-		URI knownSubject = new URI("https://www.fbi.h-da.de/");
-
-		assertTrue(core.hasKnowledgeAbout(knownSubject));
-		assertFalse(core.hasKnowledgeAbout(new URI("http://www.google.de")));
 	}
 
 	@Test

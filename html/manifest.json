@@ -2,13 +2,19 @@
   "name": "T.H. SocIO Chrome Extension",
   "version": "1.0",
   "description": "Browser interface for the SocIO RESTful API.",
-  "browser_action": {
+/*  "browser_action": {
     "default_icon": "tango-icon-theme/32x32/emblems/emblem-favorite.png",
     "popup": "index.html"
+  },*/
+  "background_page": "background.html",
+  "page_action": {
+    "default_title": "First icon",
+    "default_popup": "index.html"
   },
   "permissions": [
-  	"http://*", 
-    "http://localhost",
+//  	"http://*",
+    "http://*/*",
+//    "http://localhost",
     "tabs" // <-- Required to retrieve current displayed url
   ]
 }

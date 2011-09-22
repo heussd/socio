@@ -18,7 +18,7 @@ import socio.xmpp.XmppClient;
  */
 public class Launcher {
 	private static Logger logger = Logger.getLogger(Launcher.class);
-	private static final String VERSION = "2011-09-02-10";
+	private static final String VERSION = "2011-09-22-11";
 
 	public static void main(String[] args) {
 		logger.info("T.H. SocIO Semantic Resource Manager Version " + VERSION);
@@ -46,9 +46,10 @@ public class Launcher {
 				logger.info("Say anything at System.in to trigger shut down.");
 				System.in.read();
 				logger.info("Received something, shutting down.");
+			} else {
+//				new Tray();
 			}
 
-			System.in.read();
 			// if (debug) {
 			// long timeLimit = System.currentTimeMillis() + 60000;
 			// while (true) {

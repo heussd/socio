@@ -292,17 +292,56 @@ public class SemanticCore {
 	}
 
 	/**
-	 * Ask if the store has statements about given subject.
+	 * Ask if the store has statements about given subject. If yes, classify
+	 * with the terms "both", "own" or "foreign".
 	 */
-	public boolean hasKnowledgeAbout(URI subject) {
-
+	public String classifyKnowledgeAbout(URI subject) {
+		// Execute an ASK for general knowledge before we do further magic
 		logger.debug("Constructing query...");
 		String query = "ASK { <" + subject + "> ?predicate ?object . }";
 
-		boolean result = executeAsk(query);
-		logger.debug("Query " + query + " returned " + result);
+		if (!executeAsk(query)) {
+			logger.debug("Resource " + subject + " is unknown the the store.");
+			return "none";
+		}
 
-		return result;
+		// Make a further distinction - at this point, the store has definitely
+		// knowledge about the resource.
+		List<String> users = new ArrayList<String>();
+		QueryExecution qexec = null;
+		try {
+			qexec = QueryExecutionFactory.create(semantics.buildTaggingByQuery(subject.toASCIIString()), rdfStore);
+
+			ResultSet results = qexec.execSelect();
+
+			for (; results.hasNext();) {
+				QuerySolution rb = results.nextSolution();
+
+				RDFNode x = rb.get("user");
+
+				if (x.isLiteral()) {
+					Literal titleStr = (Literal) x;
+					users.add(titleStr.toString());
+				}
+			}
+		} catch (Exception e) {
+			logger.error("Error while executing query:", e);
+		} finally {
+			if (qexec != null)
+				qexec.close();
+		}
+
+		logger.debug("Users that know " + subject + ": " + users);
+
+		if (!users.contains(Config.getInstance().getXmppUserId())) {
+			return "foreign";
+		}
+
+		if (users.size() == 1) {
+			return "own";
+		}
+
+		return "both";
 	}
 
 	/**

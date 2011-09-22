@@ -53,7 +53,7 @@ public class RestApi implements SocIoRestApi {
 		try {
 			logger.debug("Querying semantic core...");
 
-			return CorsResponse.ok(SemanticCore.getInstance().hasKnowledgeAbout(new URI(uri)));
+			return CorsResponse.ok(SemanticCore.getInstance().classifyKnowledgeAbout(new URI(uri)));
 
 		} catch (Exception e) {
 			logger.error("Could not query for knowledge on " + uri, e);

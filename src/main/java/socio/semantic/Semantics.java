@@ -181,6 +181,7 @@ public class Semantics {
 		return null;
 	}
 
+	// FIXME: All makeTagging methods require some kind of clean up
 	public Model makeTagging(String user, URI resource, String... strings) {
 		// TODO Make this better
 		List<String> list = new ArrayList<String>();
@@ -304,6 +305,14 @@ public class Semantics {
 		String queryString = queries.getProperty("query.askfortaggingfor").replaceAll("###uri###", uri).replaceAll("###tag###", tag)
 				.replaceAll("###user###", Config.getInstance().getXmppUserId());
 
+		return QueryFactory.parse(query, queryString, null, Syntax.syntaxSPARQL);
+	}
+
+	public Query buildTaggingByQuery(String uri) {
+		Query query = QueryFactory.make();
+		query.setPrefixMapping(prefixMapping);
+
+		String queryString = queries.getProperty("query.taggingby").replaceAll("###uri###", uri);
 		return QueryFactory.parse(query, queryString, null, Syntax.syntaxSPARQL);
 	}
 
