@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import socio.rss.ActivityFeed;
 import socio.semantic.SemanticCore;
 import socio.xmpp.XmppClient;
 
@@ -99,5 +100,15 @@ public class RestApi implements SocIoRestApi {
 			logger.error("Could not query related uris:", e);
 		}
 		return CorsResponse.badRequest();
+	}
+
+	@Override
+	public Response activity(String tag) {
+		// Remove tag delimiters (if necessary)
+		tag = tag.replaceAll("'", "").replace("\"", "");
+		
+		ActivityFeed activityFeed = new ActivityFeed(tag);
+		activityFeed.addEntries(SemanticCore.getInstance().queryTagActivity(tag));
+		return CorsResponse.ok(activityFeed.toString());
 	}
 }

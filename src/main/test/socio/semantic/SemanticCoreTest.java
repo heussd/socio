@@ -10,6 +10,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import socio.Config;
+import socio.rss.ActivityEntry;
+import socio.rss.ActivityFeed;
 
 import com.hp.hpl.jena.rdf.model.Model;
 
@@ -28,6 +30,33 @@ public class SemanticCoreTest {
 		core = SemanticCore.getInstance();
 		core.clear();
 		core.persistStatements(semantics.constructDemoMessageModel(), true);
+	}
+
+	@Test
+	public void testActivity() throws Exception {
+		SemanticCore core = SemanticCore.getInstance();
+		Semantics semantics = new Semantics();
+
+		String tag = "News";
+
+		core.clear();
+		core.persistStatements(semantics.constructDemoMessageModel(), true);
+
+
+		List<ActivityEntry> activityEntries = core.queryTagActivity(tag);
+
+		assertEquals(1, activityEntries.size());
+		assertEquals(knownSubject.toString(), activityEntries.get(0).getResource());
+
+		SemanticCore.getInstance().persistStatements(semantics.makeTagging("xmpp://anotheruser@example.com", knownSubject, tag), true);
+		activityEntries = core.queryTagActivity(tag);
+		
+		assertEquals(2, activityEntries.size());
+
+		ActivityFeed activityFeed = new ActivityFeed(tag);
+		activityFeed.addEntries(activityEntries);
+		System.out.println(activityFeed.toString());
+
 	}
 
 	@Test
@@ -140,23 +169,3 @@ public class SemanticCoreTest {
 	}
 
 }
-
-// http://w3studi.informatik.uni-stuttgart.de/~bischowg/jena/jena.html
-//
-// odel model = ModelFactory.createDefaultModel();
-//
-// model.register(new LogModelChangedListener());
-//
-// // create the resource
-// Resource johnSmith = model.createResource(personURI);
-//
-// // add the property
-// johnSmith.addProperty(VCARD.FN, fullName);
-// Der Change Listener wird über das hinzufügen der Resource und der Property
-// informiert.
-//
-// Das Model Interface ist Vaterinterface des InfModel Interface, welches
-// wiederum Vaterinterface vom OntModel Interface ist.
-//
-// Parallel zu den Interfaces gibt es eine Hierarchie von Implementierungen.
-// ModelCo

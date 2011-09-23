@@ -58,6 +58,8 @@ public class Config {
 	private Boolean readonly;
 
 	private Boolean disableTray;
+	
+	private Boolean offline;
 
 	/**
 	 * TODO Clean this mess up!
@@ -248,6 +250,18 @@ public class Config {
 			readonly = "true".equals(string);
 		}
 		return readonly;
+	}
+
+	public boolean isOffline() {
+		if (offline == null) {
+			String string = properties.getProperty("offline");
+
+			if (string == null)
+				offline = false;
+
+			offline = "true".equals(string);
+		}
+		return offline;
 	}
 
 	public boolean disableTray() {

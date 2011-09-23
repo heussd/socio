@@ -70,4 +70,9 @@ public interface SocIoRestApi {
 	@GET
 	@Path("/queryRelated")
 	public Response queryRelated(@QueryParam("uri") @DefaultValue("") String uri, @QueryParam("own") @DefaultValue("true") Boolean ownFlag);
+
+	@GET
+	@Path("/activity")
+	@Produces(MediaType.APPLICATION_XML)
+	public Response activity(@QueryParam("tag") String tag);
 }

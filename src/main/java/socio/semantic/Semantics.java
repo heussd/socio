@@ -2,6 +2,7 @@ package socio.semantic;
 
 import java.io.StringWriter;
 import java.net.URI;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -112,7 +113,7 @@ public class Semantics {
 
 	protected static Tag tag;
 	protected static Sioc sioc;
-	private static ISO8601DateFormat iso8601DateFormat = new ISO8601DateFormat();
+	private static DateFormat dateFormat = new ISO8601DateFormat();
 
 	/**
 	 * Selected most (human) readable RDF format. Documentation warns about
@@ -220,7 +221,7 @@ public class Semantics {
 		}
 
 		// Timestamp & "Userstamp"
-		tagging.addProperty(tag.taggedOn, iso8601DateFormat.format(Calendar.getInstance().getTime()));
+		tagging.addProperty(tag.taggedOn, dateFormat.format(Calendar.getInstance().getTime()));
 		tagging.addProperty(tag.taggedBy, me);
 
 		// Add the tagging
@@ -333,5 +334,14 @@ public class Semantics {
 		export.write(stringWriter, Semantics.RDF_EXPORT_FORMAT);
 
 		return stringWriter.toString();
+	}
+
+	public Query buildTagActivityQuery(String tagName) {
+		Query query = QueryFactory.make();
+		query.setPrefixMapping(prefixMapping);
+
+		String queryString = queries.getProperty("query.tagactivity").replaceAll("###tag###", tagName);
+		logger.debug("Query is " + queryString);
+		return QueryFactory.parse(query, queryString, null, Syntax.syntaxSPARQL);
 	}
 }

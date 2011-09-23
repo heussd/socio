@@ -15,6 +15,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 import socio.Config;
+import socio.rss.ActivityEntry;
 import socio.xmpp.XmppClient;
 
 import com.hp.hpl.jena.query.Query;
@@ -526,5 +527,34 @@ public class SemanticCore {
 			result.put(entry.getKey(), (entry.getValue() / numberOfTags));
 		}
 		return result;
+	}
+
+	public List<ActivityEntry> queryTagActivity(String tag) {
+		List<ActivityEntry> activityEntries = new ArrayList<ActivityEntry>();
+		Query query = semantics.buildTagActivityQuery(tag);
+
+		QueryExecution qexec = null;
+		try {
+			qexec = QueryExecutionFactory.create(query, rdfStore);
+			ResultSet results = qexec.execSelect();
+
+			for (; results.hasNext();) {
+				QuerySolution rb = results.nextSolution();
+
+				logger.debug("Query result: " + rb);
+				String resource = rb.get("url").toString();
+				String date = rb.get("date").toString();
+				String user = rb.get("user").toString();
+
+				ActivityEntry activityEntry = new ActivityEntry(resource, date, user);
+				activityEntries.add(activityEntry);
+			}
+		} catch (Exception e) {
+			logger.error("Error while executing query:", e);
+		} finally {
+			if (qexec != null)
+				qexec.close();
+		}
+		return activityEntries;
 	}
 }

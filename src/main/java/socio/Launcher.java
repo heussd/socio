@@ -18,7 +18,7 @@ import socio.xmpp.XmppClient;
  */
 public class Launcher {
 	private static Logger logger = Logger.getLogger(Launcher.class);
-	private static final String VERSION = "2011-09-22-11";
+	private static final String VERSION = "2011-09-23-12";
 
 	public static void main(String[] args) {
 		logger.info("T.H. SocIO Semantic Resource Manager Version " + VERSION);
@@ -36,8 +36,10 @@ public class Launcher {
 				SemanticCore.getInstance().clear().persistStatements(new Semantics().constructDemoMessageModel(), true);
 			}
 
-			// Trigger XMPP client
-			XmppClient.getInstance();
+			if (!Config.getInstance().isOffline()) {
+				// Trigger XMPP client
+				XmppClient.getInstance();
+			}
 
 			logger.info("SocIO is now operational!");
 
