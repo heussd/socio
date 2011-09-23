@@ -7,8 +7,11 @@ import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.Toolkit;
 import java.awt.TrayIcon;
+import java.awt.TrayIcon.MessageType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import org.apache.log4j.Logger;
 
 /**
  * http://java.sun.com/developer/technicalArticles/J2SE/Desktop/javase6/
@@ -19,13 +22,31 @@ import java.awt.event.ActionListener;
  */
 public class Tray {
 
-	public static void main(String[] args) {
-		new Tray();
+	/**
+	 * Implementation of a performance critical, synchronized singleton pattern
+	 * {@link http://de.wikibooks.org/wiki/Java_Standard:_Muster_Singleton}.
+	 */
+	private static final class InstanceHolder {
+		static final Tray INSTANCE = new Tray();
 	}
 
-	public Tray() {
-		final TrayIcon trayIcon;
+	public static Tray getInstance() {
+		return InstanceHolder.INSTANCE;
+	}
 
+	public static void start() {
+		if (!Config.getInstance().isHeadless()) {
+			getInstance();
+		} else {
+			LOGGER.warn("System is headless, will not display tray icon!");
+		}
+	}
+
+	private static final Logger LOGGER = Logger.getLogger(Tray.class);
+
+	private TrayIcon trayIcon;
+
+	private Tray() {
 		if (!Config.getInstance().disableTray() && SystemTray.isSupported()) {
 
 			SystemTray tray = SystemTray.getSystemTray();
@@ -42,7 +63,7 @@ public class Tray {
 			MenuItem defaultItem = new MenuItem("Exit");
 			defaultItem.addActionListener(exitListener);
 			popup.add(defaultItem);
-			
+
 			trayIcon = new TrayIcon(image, "SocIO Tray Icon", popup);
 			trayIcon.setImageAutoSize(true);
 
@@ -51,7 +72,11 @@ public class Tray {
 			} catch (AWTException e) {
 				System.err.println("TrayIcon could not be added.");
 			}
+
 		}
 	}
 
+	public void notifyForUpdate() {
+		trayIcon.displayMessage("Update available", "There is an updated version of this program available - please update immediately.", MessageType.INFO);
+	}
 }

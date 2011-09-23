@@ -58,7 +58,7 @@ public class Config {
 	private Boolean readonly;
 
 	private Boolean disableTray;
-	
+
 	private Boolean offline;
 
 	/**
@@ -180,8 +180,7 @@ public class Config {
 	}
 
 	public boolean useProxy() {
-		// TODO: Hardcoded: use proxy setting is hardcoded to false
-		return false;
+		return properties.getProperty("proxy.address") != null;
 	}
 
 	public String getProxyAddress() {
