@@ -33,7 +33,7 @@ function buildTagList() {
 	  
 	  $.each(data, function(key, val) {
 	  		  	
-	    items.push('<li id="' + key + '"><button class="cupid-green"><a href="#" class="tag">' + val + '</a></button></li>');
+	    items.push('<li id="' + key + '"><button class="cupid-green tag" onclick="openUrl(\'http://localhost:8080/socio/rest/activity?tag=' + val + '\');">' + val + '</button></li>');
 	  });
 	  
 	$('<ul/>', {
