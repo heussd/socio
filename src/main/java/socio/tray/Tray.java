@@ -87,11 +87,13 @@ public class Tray {
 	 */
 
 	public void warn(String message) {
-		trayIcon.displayMessage("Warning", message, MessageType.WARNING);
+		if (trayIcon != null)
+			trayIcon.displayMessage("Warning", message, MessageType.WARNING);
 	}
 
 	public void error(String message) {
-		trayIcon.displayMessage("Error", message, MessageType.ERROR);
+		if (trayIcon != null)
+			trayIcon.displayMessage("Error", message, MessageType.ERROR);
 	}
 
 }
