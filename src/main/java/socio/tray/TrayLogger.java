@@ -26,8 +26,6 @@ public class TrayLogger extends AppenderSkeleton {
 	protected void append(LoggingEvent loggingEvent) {
 		String message = this.layout.format(loggingEvent);
 
-		System.out.println(loggingEvent.getLevel());
-
 		switch (loggingEvent.getLevel().toInt()) {
 		case Level.WARN_INT:
 			Tray.getInstance().warn(message);
