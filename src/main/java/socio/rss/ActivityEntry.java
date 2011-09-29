@@ -1,7 +1,5 @@
 package socio.rss;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -13,7 +11,7 @@ public class ActivityEntry {
 	private final static Logger LOGGER = Logger.getLogger(ActivityEntry.class);
 	private final static DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,S");
 
-	private URL resource;
+	private String resource;
 	private Date date;
 	private String user;
 
@@ -24,15 +22,11 @@ public class ActivityEntry {
 	}
 
 	public String getResource() {
-		return resource.toString();
+		return resource;
 	}
 
 	public void setResource(String resource) {
-		try {
-			this.resource = new URL(resource);
-		} catch (MalformedURLException e) {
-			LOGGER.warn("Could not parse " + resource + " as URL: ", e);
-		}
+		this.resource = resource;
 	}
 
 	public Date getDate() {
