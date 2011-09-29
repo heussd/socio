@@ -18,15 +18,18 @@ import socio.Config;
 import socio.rss.ActivityEntry;
 import socio.xmpp.XmppClient;
 
+import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.rdf.model.Alt;
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.RDFReader;
+import com.hp.hpl.jena.rdf.model.Resource;
 
 /**
  * This class is the entry point for all involved semantic technologies.
@@ -176,7 +179,7 @@ public class SemanticCore {
 			logger.info("Successfully received RDF");
 
 			// Build import model and merge it into the store
-			receivedMessage = semantics.constructValidModel(receivedMessage, from);
+			receivedMessage = semantics.constructValidUserModel(receivedMessage, from);
 			if (!receivedMessage.isEmpty()) {
 				persistStatements(receivedMessage, true);
 			}
@@ -192,6 +195,7 @@ public class SemanticCore {
 	}
 
 	public void persistStatements(Model model, Boolean silent) {
+		logger.debug("Persisting model...");
 		if (!model.isEmpty()) {
 			rdfStore.add(model);
 			persistStore(true);
@@ -201,6 +205,8 @@ public class SemanticCore {
 			} else {
 				logger.debug("Newly imported model will not be broadcasted!");
 			}
+		} else {
+			logger.debug("Model was empty, nothing to persist.");
 		}
 	}
 
@@ -458,13 +464,37 @@ public class SemanticCore {
 	 * 
 	 * @return
 	 */
-	public String getAllMyStatements() {
-		logger.debug("Collecting all of " + Config.getInstance().getXmppUserId() + "'s statements...");
-		Model model = semantics.constructValidModel(rdfStore, Config.getInstance().getXmppUserId());
-		StringWriter stringWriter = new StringWriter();
-		model.write(stringWriter, Semantics.RDF_EXPORT_FORMAT);
+	public List<String> getAllMyStatements() {
+		List<String> statements = new ArrayList<String>();
 
-		return stringWriter.toString();
+		logger.debug("Collecting all of " + Config.getInstance().getXmppUserId() + "'s statements...");
+		Model model = semantics.constructValidUserModel(rdfStore, Config.getInstance().getXmppUserId());
+
+		Iterator<Node> iterator;
+
+		// = model.listStatements(semantics.TAGGING_SELECTOR);
+
+		// iterator = model.listObjects();
+		iterator = model.listResourcesWithProperty(semantics.tag.tag);
+		// iterator = model.listObjects();
+
+		while (iterator.hasNext()) {
+			System.out.println("--------");
+
+			Resource resource = (Resource) iterator.next();
+			Model statement = semantics.constructValidStatementModel(model, resource);
+
+			// Resources statement = iterator.next();
+
+			// System.out.println(statement.toString());
+
+			StringWriter stringWriter = new StringWriter();
+			statement.write(stringWriter, Semantics.RDF_EXPORT_FORMAT);
+			statements.add(stringWriter.toString());
+
+		}
+
+		return statements;
 	}
 
 	public HashMap<String, Float> queryRelatedUris(URI resource, Boolean ownFlag) {

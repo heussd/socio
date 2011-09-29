@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.Properties;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 /**
@@ -43,10 +44,24 @@ public class Config {
 				return true;
 			}
 
-			@Override
-			public String getXmppUserId() {
-				return "xmpp://user@example.com";
-			}
+			// @Override
+			// public String getXmppUserId() {
+			// return "xmpp://bob-sociodemo@jabber.ccc.de";
+			// }
+			//
+			// @Override
+			// public String getPassword() {
+			// try {
+			// Properties jUnitProperties = new Properties();
+			// jUnitProperties.load(Config.class.getClassLoader().getResourceAsStream("junit.properties"));
+			//
+			// return jUnitProperties.getProperty("xmpp.pass");
+			// } catch (Exception e) {
+			// e.printStackTrace();
+			// return null;
+			// }
+			// }
+
 		};
 		return Config.instance;
 	}
@@ -88,7 +103,15 @@ public class Config {
 	}
 
 	private Config(Boolean debug) {
+		Logger.getRootLogger().setLevel(Level.ALL);
+
 		logger.info("Config class is in test mode!");
+
+		this.properties = new Properties();
+		try {
+			properties.load(Config.class.getClassLoader().getResourceAsStream("junit.properties"));
+		} catch (Exception e) {
+		}
 	}
 
 	private Boolean loadConfig() {
@@ -223,6 +246,10 @@ public class Config {
 				debug = false;
 
 			debug = "true".equals(debugString);
+
+			if (debug) {
+				Logger.getRootLogger().setLevel(Level.DEBUG);
+			}
 		}
 		return debug;
 	}

@@ -25,10 +25,13 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.Selector;
+import com.hp.hpl.jena.rdf.model.SimpleSelector;
 import com.hp.hpl.jena.shared.PrefixMapping;
 import com.hp.hpl.jena.sparql.vocabulary.FOAF;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
+import com.hp.hpl.jena.vocabulary.VCARD;
 
 /**
  * This class does the mapping between several ontologies and Java, like
@@ -115,6 +118,8 @@ public class Semantics {
 	protected static Sioc sioc;
 	private static DateFormat dateFormat = new ISO8601DateFormat();
 
+	public static Selector TAGGING_SELECTOR;
+
 	/**
 	 * Selected most (human) readable RDF format. Documentation warns about
 	 * performance issues when writing "very large Models" {@link http
@@ -133,6 +138,8 @@ public class Semantics {
 		prefixMapping.setNsPrefix("tag", Tag.NameSpace);
 		prefixMapping.setNsPrefix("rdfs", RDFS.getURI());
 		prefixMapping.setNsPrefix("foaf", FOAF.getURI());
+
+		TAGGING_SELECTOR = new SimpleSelector(RDFS.Resource, RDF.type, tag.Tagging);
 
 		queries = new Properties();
 		try {
@@ -239,7 +246,7 @@ public class Semantics {
 	 * Basically, it makes sure that all taggings are named with the proper user
 	 * and have timestamps. Invalid models will be consumed silently.
 	 */
-	public Model constructValidModel(Model receivedModel, String user) {
+	public Model constructValidUserModel(Model receivedModel, String user) {
 		logger.debug("Constructing import model for user " + user + " ...");
 		Model result = createDefaultModel();
 
@@ -249,12 +256,43 @@ public class Semantics {
 
 			// This CONSTRUCT builds a graph following SocIOs semantic storage
 			// model.
-			query = QueryFactory.parse(query, queries.getProperty("query.constructmodel").replaceAll("###user###", user), null, Syntax.syntaxSPARQL);
+			query = QueryFactory.parse(query, queries.getProperty("query.constructusermodel").replaceAll("###user###", user), null, Syntax.syntaxSPARQL);
 
 			logger.debug("Constructed import query: " + query);
 
 			try {
 				QueryExecution qcexec = QueryExecutionFactory.create(query, receivedModel);
+				result = qcexec.execConstruct();
+
+				if (result.isEmpty()) {
+					logger.warn("Constructed model was empty.");
+				}
+			} catch (Exception e) {
+				logger.error("Error while constructing import graph:", e);
+			}
+		} else {
+			logger.warn("Model to be imported was received empty.");
+		}
+
+		return result;
+	}
+
+	public Model constructValidStatementModel(Model model, Resource resource) {
+		logger.debug("Constructing statement model for resource " + resource.toString() + " ...");
+		Model result = createDefaultModel();
+
+		if (!model.isEmpty()) {
+			Query query = QueryFactory.make();
+			query.setPrefixMapping(prefixMapping);
+
+			// This CONSTRUCT builds a graph following SocIOs semantic storage
+			// model.
+			query = QueryFactory.parse(query, queries.getProperty("query.constructstatementmodel").replaceAll("###resource###", resource.toString()), null, Syntax.syntaxSPARQL);
+
+			logger.debug("Constructed import query: " + query);
+
+			try {
+				QueryExecution qcexec = QueryExecutionFactory.create(query, model);
 				result = qcexec.execConstruct();
 
 				if (result.isEmpty()) {
@@ -328,7 +366,7 @@ public class Semantics {
 
 	public String constructExportModel(Model model) {
 		Model export = createDefaultModel();
-		export.add(constructValidModel(model, Config.getInstance().getXmppUserId()));
+		export.add(constructValidUserModel(model, Config.getInstance().getXmppUserId()));
 
 		StringWriter stringWriter = new StringWriter();
 		export.write(stringWriter, Semantics.RDF_EXPORT_FORMAT);

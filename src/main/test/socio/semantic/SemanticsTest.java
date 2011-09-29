@@ -31,12 +31,12 @@ public class SemanticsTest {
 		model.write(System.out, Semantics.RDF_EXPORT_FORMAT);
 
 		// Try to build a valid import model
-		model = semantics.constructValidModel(model, Config.getInstance().getXmppUserId());
+		model = semantics.constructValidUserModel(model, Config.getInstance().getXmppUserId());
 		model.write(System.out, Semantics.RDF_EXPORT_FORMAT);
 		assertFalse(model.isEmpty());
 
 		// Try to build a INvalid import model (nonmatching user)
-		model = semantics.constructValidModel(model, "sttde");
+		model = semantics.constructValidUserModel(model, "sttde");
 		model.write(System.out, Semantics.RDF_EXPORT_FORMAT);
 		assertTrue(model.isEmpty());
 

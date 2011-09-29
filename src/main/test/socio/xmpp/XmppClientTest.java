@@ -1,34 +1,39 @@
 package socio.xmpp;
 
+import org.junit.Before;
 import org.junit.Test;
+
+import socio.Config;
+import socio.semantic.SemanticCore;
+import socio.semantic.Semantics;
 
 public class XmppClientTest {
 
-	// Sorry, no working test coverage :(
+	private Semantics semantics;
+	private Boolean has_junit_config;
 
-	// @Before
-	// public void setUp() throws Exception {
-	// XmppClient.getInstance();
-	// }
+	@Before
+	public void setUp() throws Exception {
+
+		// This test requires working Jabber credentials, which are naturally
+		// not available on the public repository. However, the test should NOT
+		// fail because of a missing unit config file.
+		has_junit_config = Config.class.getClassLoader().getResourceAsStream("junit.properties") != null ? true : false;
+
+		Config.getTestInstance();
+		semantics = new Semantics();
+	}
 
 	@Test
 	public void testAddUser() throws Exception {
-//		Tray.getInstance();
-//		Logger logger = Logger.getLogger(XmppClientTest.class);
-//
-//		String n = null;
-//		try {
-//
-//			n.equals("asd");
-//		} catch (Exception e) {
-//			logger.error("Could not bla bla bla", e);
-//		}
-//		
-//		System.in.read();
-	}
-	// @Test
-	// public void test() {
-	// XmppClient.getInstance().broadcast("Hallo :)");
-	// }
+		if (has_junit_config) {
+			SemanticCore core = SemanticCore.getInstance();
+			core.clear();
+			core.persistStatements(semantics.constructDemoMessageModel());
+			core.addTags("http://example.com", "Sample");
 
+			// Expected: two messages
+			XmppClient.getInstance().addUser("xmpp://alice-sociodemo@jabber.ccc.de");
+		}
+	}
 }

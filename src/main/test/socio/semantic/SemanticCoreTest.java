@@ -42,7 +42,6 @@ public class SemanticCoreTest {
 		core.clear();
 		core.persistStatements(semantics.constructDemoMessageModel(), true);
 
-
 		List<ActivityEntry> activityEntries = core.queryTagActivity(tag);
 
 		assertEquals(1, activityEntries.size());
@@ -50,7 +49,7 @@ public class SemanticCoreTest {
 
 		SemanticCore.getInstance().persistStatements(semantics.makeTagging("xmpp://anotheruser@example.com", knownSubject, tag), true);
 		activityEntries = core.queryTagActivity(tag);
-		
+
 		assertEquals(2, activityEntries.size());
 
 		ActivityFeed activityFeed = new ActivityFeed(tag);
@@ -94,8 +93,7 @@ public class SemanticCoreTest {
 		core.clear();
 		core.persistStatements(semantics.constructDemoMessageModel(), true);
 
-		String allMyStatements = core.getAllMyStatements();
-		System.out.println(allMyStatements);
+		List<String> allMyStatements = core.getAllMyStatements();
 
 		List<String> newTags = new ArrayList<String>();
 		newTags.add("new");
@@ -107,7 +105,7 @@ public class SemanticCoreTest {
 
 		System.out.println(core.getAllMyStatements());
 
-		assertEquals(allMyStatements, core.getAllMyStatements());
+		 assertEquals(allMyStatements, core.getAllMyStatements());
 	}
 
 	@Test

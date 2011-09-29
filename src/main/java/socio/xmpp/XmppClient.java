@@ -11,6 +11,7 @@ import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.RosterListener;
 import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Message.Body;
@@ -37,6 +38,15 @@ public class XmppClient {
 	}
 
 	private static Logger logger = Logger.getLogger(XmppClient.class);
+
+	/**
+	 * This setting seems to be set by each server individually, best practices
+	 * could not yet be found. However, this is Google AppEngine's setting (
+	 * {@link http
+	 * ://code.google.com/intl/de-DE/appengine/docs/java/xmpp/overview
+	 * .html#Quotas_and_Limits}).
+	 */
+	private static final int MAX_MESSAGE_SIZE_IN_KB = 1000;
 
 	/**
 	 * SocIOs primary packet listener. Passes all received messages to the
@@ -126,7 +136,9 @@ public class XmppClient {
 
 				@Override
 				public void entriesDeleted(Collection<String> arg0) {
-					// Ignore this event
+					for (String deletedEntry : arg0) {
+						logger.info("Entry was deleted from the roster: " + deletedEntry);
+					}
 				}
 
 				@Override
@@ -134,7 +146,14 @@ public class XmppClient {
 					for (String addedEntry : arg0) {
 						logger.info("Entry was added to the roster: " + addedEntry);
 						logger.debug("Sending my statements to user " + addedEntry);
-						sendQuietly(addedEntry, SemanticCore.getInstance().getAllMyStatements());
+
+						// Send each resource by its own - because we don't know
+						// the maximum XMPP message size, sending the entire RDF
+						// store at once is not an option.
+						for (String statement : SemanticCore.getInstance().getAllMyStatements()) {
+							sendQuietly(addedEntry, statement);
+						}
+
 					}
 				}
 
@@ -146,7 +165,6 @@ public class XmppClient {
 		}
 	}
 
-	// FIXME: Delete an user before adding him
 	public boolean addUser(String jabberId) {
 		jabberId = jabberId.trim().replaceAll("'", "");
 
@@ -157,6 +175,16 @@ public class XmppClient {
 		if (!Config.getInstance().isValidXmppId(jabberId)) {
 			logger.warn("Invalid XMPP ID: " + jabberId);
 			return false;
+		}
+
+		RosterEntry existingRosterEntry = connection.getRoster().getEntry(jabberId.replaceAll("xmpp://", ""));
+		if (existingRosterEntry != null) {
+			logger.debug("User already exists on the roster, trying to delete him first...");
+			try {
+				connection.getRoster().removeEntry(existingRosterEntry);
+			} catch (XMPPException e) {
+				logger.warn("Could not delete roster entry \"" + jabberId + "\"", e);
+			}
 		}
 
 		logger.debug("Adding new user " + jabberId + " ...");
@@ -190,10 +218,13 @@ public class XmppClient {
 	/**
 	 * Guess what this class does.
 	 * 
-	 * FIXME: Take care for maximum message size
 	 */
 	public void send(String user, String body) throws Exception {
 		logger.debug("Sending message to user " + user + "...");
+
+		if (body.toCharArray().length * 2 / 1024 > MAX_MESSAGE_SIZE_IN_KB) {
+			logger.warn("Message exceeds maximum message size of " + MAX_MESSAGE_SIZE_IN_KB + " KB.");
+		}
 
 		// Send the message. The framework requires a MessageListener
 		// here, so we add a temporary lister and remove it immediately
@@ -202,9 +233,9 @@ public class XmppClient {
 		chat.removeMessageListener(NULL_MESSAGE_LISTENER);
 		chat.sendMessage(body);
 
-		Message message = new Message(user, Message.Type.chat);
-		message.setBody(body);
-		connection.sendPacket(message);
+		// Message message = new Message(user, Message.Type.chat);
+		// message.setBody(body);
+		// connection.sendPacket(message);
 
 	}
 
