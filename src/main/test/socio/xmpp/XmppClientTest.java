@@ -1,5 +1,9 @@
 package socio.xmpp;
 
+import org.apache.log4j.Logger;
+import org.junit.Test;
+
+import socio.tray.Tray;
 
 public class XmppClientTest {
 
@@ -10,11 +14,21 @@ public class XmppClientTest {
 	// XmppClient.getInstance();
 	// }
 
-	// @Test
-	// public void testAddUser() {
-	// XmppClient.getInstance().addUser("alice-sociodemo@jabber.ccc.de");
-	// }
+	@Test
+	public void testAddUser() throws Exception {
+		Tray.getInstance();
+		Logger logger = Logger.getLogger(XmppClientTest.class);
 
+		String n = null;
+		try {
+
+			n.equals("asd");
+		} catch (Exception e) {
+			logger.error("Could not bla bla bla", e);
+		}
+		
+		System.in.read();
+	}
 	// @Test
 	// public void test() {
 	// XmppClient.getInstance().broadcast("Hallo :)");

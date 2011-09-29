@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import socio.rest.RestLauncher;
 import socio.semantic.SemanticCore;
 import socio.semantic.Semantics;
+import socio.tray.Tray;
 import socio.xmpp.XmppClient;
 
 /**

@@ -1,4 +1,4 @@
-package socio;
+package socio.tray;
 
 import java.awt.AWTException;
 import java.awt.Image;
@@ -12,6 +12,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import org.apache.log4j.Logger;
+
+import socio.Config;
 
 /**
  * http://java.sun.com/developer/technicalArticles/J2SE/Desktop/javase6/
@@ -79,4 +81,17 @@ public class Tray {
 	public void notifyForUpdate() {
 		trayIcon.displayMessage("Update available", "There is an updated version of this program available - please update immediately.", MessageType.INFO);
 	}
+
+	/*
+	 * This methods are used by the Log4J Tray Logappender.
+	 */
+
+	public void warn(String message) {
+		trayIcon.displayMessage("Warning", message, MessageType.WARNING);
+	}
+
+	public void error(String message) {
+		trayIcon.displayMessage("Error", message, MessageType.ERROR);
+	}
+
 }

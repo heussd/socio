@@ -82,7 +82,6 @@ public class XmppClient {
 	private Connection connection;
 
 	private XmppClient() {
-		// bringUpClient("socio", "TC_MwC_-x7");
 		bringUpClient(Config.getInstance().getUserName(), Config.getInstance().getPassword());
 	}
 
@@ -147,6 +146,7 @@ public class XmppClient {
 		}
 	}
 
+	// FIXME: Delete an user before adding him
 	public boolean addUser(String jabberId) {
 		jabberId = jabberId.trim().replaceAll("'", "");
 
@@ -189,8 +189,10 @@ public class XmppClient {
 
 	/**
 	 * Guess what this class does.
+	 * 
+	 * FIXME: Take care for maximum message size
 	 */
-	public void send(String user, String message) throws Exception {
+	public void send(String user, String body) throws Exception {
 		logger.debug("Sending message to user " + user + "...");
 
 		// Send the message. The framework requires a MessageListener
@@ -198,7 +200,12 @@ public class XmppClient {
 		// in the next step.
 		Chat chat = connection.getChatManager().createChat(user, NULL_MESSAGE_LISTENER);
 		chat.removeMessageListener(NULL_MESSAGE_LISTENER);
-		chat.sendMessage(message);
+		chat.sendMessage(body);
+
+		Message message = new Message(user, Message.Type.chat);
+		message.setBody(body);
+		connection.sendPacket(message);
+
 	}
 
 	/**

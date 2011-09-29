@@ -6,6 +6,12 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
+/**
+ * TODO: Overwrite Log4J-Level in debug mode.
+ * 
+ * @author th
+ * 
+ */
 public class Config {
 
 	/**
