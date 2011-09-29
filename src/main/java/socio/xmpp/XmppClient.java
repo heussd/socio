@@ -1,6 +1,7 @@
 package socio.xmpp;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.jivesoftware.smack.Chat;
@@ -150,8 +151,10 @@ public class XmppClient {
 						// Send each resource by its own - because we don't know
 						// the maximum XMPP message size, sending the entire RDF
 						// store at once is not an option.
-						for (String statement : SemanticCore.getInstance().getAllMyStatements()) {
-							sendQuietly(addedEntry, statement);
+						List<String> statements = SemanticCore.getInstance().getAllMyStatements();
+						for (int i = 0; i < statements.size(); i++) {
+							logger.info("Sending statement " + (1 + i) + "/" + statements.size() + " ...");
+							sendQuietly(addedEntry, statements.get(i));
 						}
 
 					}
