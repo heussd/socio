@@ -18,13 +18,11 @@ import socio.Config;
 import socio.rss.ActivityEntry;
 import socio.xmpp.XmppClient;
 
-import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.Alt;
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.RDFNode;
@@ -470,23 +468,14 @@ public class SemanticCore {
 		logger.debug("Collecting all of " + Config.getInstance().getXmppUserId() + "'s statements...");
 		Model model = semantics.constructValidUserModel(rdfStore, Config.getInstance().getXmppUserId());
 
-		Iterator<Node> iterator;
-
-		// = model.listStatements(semantics.TAGGING_SELECTOR);
-
-		// iterator = model.listObjects();
-		iterator = model.listResourcesWithProperty(semantics.tag.tag);
-		// iterator = model.listObjects();
+		// FIXME: To many warnings here :(
+		@SuppressWarnings({ "unchecked", "static-access" })
+		Iterator<Resource> iterator = model.listResourcesWithProperty(semantics.tag.tag);
 
 		while (iterator.hasNext()) {
-			System.out.println("--------");
 
-			Resource resource = (Resource) iterator.next();
+			Resource resource = iterator.next();
 			Model statement = semantics.constructValidStatementModel(model, resource);
-
-			// Resources statement = iterator.next();
-
-			// System.out.println(statement.toString());
 
 			StringWriter stringWriter = new StringWriter();
 			statement.write(stringWriter, Semantics.RDF_EXPORT_FORMAT);

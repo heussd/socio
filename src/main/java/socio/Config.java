@@ -44,10 +44,10 @@ public class Config {
 				return true;
 			}
 
-			// @Override
-			// public String getXmppUserId() {
-			// return "xmpp://bob-sociodemo@jabber.ccc.de";
-			// }
+			@Override
+			public String getXmppUserId() {
+				return "xmpp://bob-sociodemo@jabber.ccc.de";
+			}
 			//
 			// @Override
 			// public String getPassword() {
@@ -103,7 +103,7 @@ public class Config {
 	}
 
 	private Config(Boolean debug) {
-		Logger.getRootLogger().setLevel(Level.ALL);
+		Logger.getRootLogger().setLevel(Level.WARN);
 
 		logger.info("Config class is in test mode!");
 

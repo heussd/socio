@@ -1,12 +1,14 @@
 package socio.xmpp;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import socio.Config;
 import socio.semantic.SemanticCore;
 import socio.semantic.Semantics;
 
+@Ignore("This class must be executed manually!")
 public class XmppClientTest {
 
 	private Semantics semantics;
