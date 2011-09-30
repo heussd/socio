@@ -1,0 +1,10 @@
+{
+    "name": "socio-ff", 
+    "license": "", 
+    "author": "", 
+    "version": "1.0", 
+    "fullName": "Firefox Browser Addon for the SocIO RESTful API.", 
+    "id": "jid1-S6YS47KdkjV8MQ", 
+    "icon": "data/images/add.png",
+    "description": "Firefox Browser Addon for the SocIO RESTful API.\nBased on T.H. SocIO Chrome Extension."
+}
