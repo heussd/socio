@@ -161,7 +161,7 @@ jQuery.fn.sortElements = (function(){
 
 function updateAddressbarIcon(url, id) {
   // Catch multiple calls for the same url
-  if (url != lastUrl) {
+  //if (url != lastUrl) {
     lastUrl = url;
 
     /*
@@ -184,5 +184,5 @@ function updateAddressbarIcon(url, id) {
         }
       }
    });
- }
+ //}
 }

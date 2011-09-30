@@ -11,9 +11,7 @@
           });
 
           chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab){
-            if(changeInfo.status == "loading") {
-                updateAddressbarIcon(tab.url, tab.id);
-            }
+             updateAddressbarIcon(tab.url, tab.id);
           });
           
           chrome.tabs.onSelectionChanged.addListener(function(tabId) {
@@ -22,13 +20,6 @@
             });
           });
 
-          chrome.tabs.onCreated.addListener(function(tabId) {
-            chrome.tabs.getSelected(null,function(tab) {
-              updateAddressbarIcon(tab.url, tab.id);
-            });
-          });
-
-        
         } catch(err) {
           // Fallback option, hardcode your URL here
           updateAddressbarIcon("https://www.fbi.h-da.de/", 0);
