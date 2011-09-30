@@ -148,8 +148,10 @@ self.port.on("startOver",function(text){
 function addNewTag($tag) {
   if ($tag == "") return;
   if ($tag == " ") return;
-  $.ajax({ url: "http://localhost:8080/socio/rest/addTag?uri=" + $currentUrl + "&tag='" + $tag + "'"});
-  self.port.emit("addBookmark",$tag);
+  $.ajax({ url: "http://localhost:8080/socio/rest/addTag?uri=" + $currentUrl + "&tag='" + $tag + "'", success: function(data, textStatus, jqXHR){
+    self.port.emit("addBookmark",$tag);
+    updateAddressbarIcon($currentUrl);
+  }});
 }
 
 
@@ -225,7 +227,6 @@ function buildTagList() {
 
 function openUrl(url) {
 	self.port.emit("openTab",url);
-	updateAddressbarIcon(url);
 }
 
 function buildRelatedList() {
@@ -321,10 +322,7 @@ jQuery.fn.sortElements = (function(){
 
 
 function updateAddressbarIcon(url) {
-  // Catch multiple calls for the same url
-  //if (url != lastUrl) {
-   // lastUrl = url;
-
+console.log("updateAdressbarIcon(): " + url);
     /*
     Fire a "What do you know about ...?"-request. The response is
     a classification of SocIOs knowledge about the given resource:
@@ -336,14 +334,8 @@ function updateAddressbarIcon(url) {
     $.ajax({
       url:"http://localhost:8080/socio/rest/knows?uri=" + url,
       success: function(data, status) {
-        try {
           self.port.emit("changeIcon",data);
-        }
-        catch(err) {
-          // Todo: Implement fallback for non-Chrome 
-        }
       }
    });
- //}
 }
 

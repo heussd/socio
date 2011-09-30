@@ -26,7 +26,7 @@ Requirements
 ------------
 
 * A Jabber account. A dedicated account is suggested.
-* For maximum confort: [Chromium](http://www.chromium.org/) or [Google Chrome](http://www.google.de/chrome) browser (included HTML pages require some minor hacking to work with other compliant browsers, see notice below).
+* For maximum confort: [Chromium](http://www.chromium.org/), [Google Chrome](http://www.google.de/chrome) or [Mozilla Firefox](http://www.mozilla.org/en-US/firefox/features/) browser (included HTML pages require some minor hacking to work with other compliant browsers, see notice below).
 
 
 Build mantra
