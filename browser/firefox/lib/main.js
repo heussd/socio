@@ -18,6 +18,9 @@ try{
 var bookmarks = Cc["@mozilla.org/browser/nav-bookmarks-service;1"]
                 .getService(Ci.nsINavBookmarksService);
 
+var tagging = Cc["@mozilla.org/browser/tagging-service;1"]
+              .getService(Ci.nsITaggingService);
+
 var socioPanel = require("panel").Panel({
   width:400,
   height:300,         
@@ -79,21 +82,17 @@ socioPanel.port.on("addBookmark", function(tag) {
   if(getsBookmarked == false){
     return;
   }
-  //Bookmark already exists?
   var nsUri = makeURI(tabs.activeTab.url);
   var title = tabs.activeTab.title;
-  var count = 0;
-  var bookmarkIds = bookmarks.getBookmarkIdsForURI(nsUri);
-  if(bookmarkIds.length == 0){
-    //Add new Bookmark and tag it
-    var bId = bookmarks.insertBookmark(0, nsUri, bookmarks.DEFAULT_INDEX, title);
-    bookmarks.setKeywordForBookmark(bId,tag);
-  }else{
-    //Add new Tag 
-    for(var i=0; i<bookmarkIds.length; ++i){
-         bookmarks.setKeywordForBookmark(bookmarkIds[i],tag);
-    }
+  
+  //Check if URL is already bookmarked
+  if(bookmarks.isBookmarked(nsUri) == false){
+    //Insert bookmark
+    bookmarks.insertBookmark(bookmarks.bookmarksMenuFolder, nsUri, bookmarks.DEFAULT_INDEX,title);
   }
+
+  //Tag URL
+  tagging.tagURI(nsUri, [tag]);
 });
 
 function makeURI(aURL) {  

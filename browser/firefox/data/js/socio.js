@@ -335,7 +335,10 @@ console.log("updateAdressbarIcon(): " + url);
       url:"http://localhost:8080/socio/rest/knows?uri=" + url,
       success: function(data, status) {
           self.port.emit("changeIcon",data);
-      }
+      },
+      error: function(jqXHR, textStatus, errorThrown){
+          self.port.emit("changeIcon","none");
+  }
    });
 }
 
