@@ -59,7 +59,7 @@ public class Config {
 			LOGGER.error("Could not load properties file", e);
 		}
 
-		while (!testmode && !isValidXmppId(getXmppUserId())) {
+		while (!testmode && !isValidXmppId(properties.getProperty("xmpp.user"))) {
 			setupWizard();
 		}
 	}
