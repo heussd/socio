@@ -23,27 +23,27 @@ public class Launcher {
 	public static void main(String[] args) {
 		logger.info("T.H. SocIO Semantic Resource Manager");
 
-		Config.getInstance().takeParameters(args);
+		Config.parseCommandline(args);
 
 		try {
 
-			if (!Config.getInstance().isHeadless())
+			if (!Config.isHeadless())
 				new RestLauncher();
 
 			// Early start of the semantic core when in debug mode
-			if (Config.getInstance().isDebug()) {
+			if (Config.isDebug()) {
 				// TODO: Use a dedicated rdf store for debug here
 				SemanticCore.getInstance().clear().persistStatements(new Semantics().constructDemoMessageModel(), true);
 			}
 
-			if (!Config.getInstance().isOffline()) {
+			if (!Config.isOffline()) {
 				// Trigger XMPP client
 				XmppClient.getInstance();
 			}
 
 			logger.info("SocIO is now operational!");
 
-			if (Config.getInstance().isHeadless()) {
+			if (Config.isHeadless()) {
 				// Prevent shutdown by waiting for any Console.in
 				logger.info("Say anything at System.in to trigger shut down.");
 				System.in.read();
@@ -53,7 +53,7 @@ public class Launcher {
 			}
 
 			if (UpdateChecker.updateAvailable()) {
-				if (!Config.getInstance().isHeadless()) {
+				if (!Config.isHeadless()) {
 					Tray.getInstance().notifyForUpdate();
 				}
 			}

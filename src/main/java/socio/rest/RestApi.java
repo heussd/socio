@@ -83,12 +83,16 @@ public class RestApi implements SocIoRestApi {
 
 	@Override
 	public Response addTag(String uri, String tag) {
+		// Remove tag / url delimiters (if necessary)
+		tag = tag.replaceAll("'", "").replaceAll("\"", "");
+		uri = uri.replaceAll("'", "").replaceAll("\"", "");
 
-		// Remove tag delimiters (if necessary)
-		tag = tag.replaceAll("'", "").replace("\"", "");
-
-		logger.debug("Add tag " + tag + " to resource " + uri);
-		SemanticCore.getInstance().addTags(uri, new String[] { tag });
+		if (!tag.equals("")) {
+			logger.debug("Add tag " + tag + " to resource " + uri);
+			SemanticCore.getInstance().addTags(uri, new String[] { tag });
+		} else {
+			logger.debug("Tag was empty, will not add.");
+		}
 		return CorsResponse.ok();
 	}
 
@@ -106,7 +110,7 @@ public class RestApi implements SocIoRestApi {
 	public Response activity(String tag) {
 		// Remove tag delimiters (if necessary)
 		tag = tag.replaceAll("'", "").replace("\"", "");
-		
+
 		ActivityFeed activityFeed = new ActivityFeed(tag);
 		activityFeed.addEntries(SemanticCore.getInstance().queryTagActivity(tag));
 		return CorsResponse.ok(activityFeed.toString());

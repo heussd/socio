@@ -37,7 +37,7 @@ public class Tray {
 	}
 
 	public static void start() {
-		if (!Config.getInstance().isHeadless()) {
+		if (!Config.isHeadless()) {
 			getInstance();
 		} else {
 			LOGGER.warn("System is headless, will not display tray icon!");
@@ -49,7 +49,7 @@ public class Tray {
 	private TrayIcon trayIcon;
 
 	private Tray() {
-		if (!Config.getInstance().disableTray() && SystemTray.isSupported()) {
+		if (!Config.disableTray() && SystemTray.isSupported()) {
 
 			SystemTray tray = SystemTray.getSystemTray();
 			Image image = Toolkit.getDefaultToolkit().getImage(Tray.class.getClassLoader().getResource("socio_icon.png"));

@@ -180,7 +180,7 @@ public class Semantics {
 	 */
 	public Model constructDemoMessageModel() {
 		try {
-			Model model = makeTagging(Config.getInstance().getXmppUserId(), new URI("https://www.fbi.h-da.de/"), "Department page", "Computer", "University", "News");
+			Model model = makeTagging(Config.getXmppUserId(), new URI("https://www.fbi.h-da.de/"), "Department page", "Computer", "University", "News");
 			return model;
 		} catch (Exception e) {
 			logger.error("Could not construct demo model:", e);
@@ -199,7 +199,7 @@ public class Semantics {
 	}
 
 	public Model makeTagging(URI resource, List<String> strings) {
-		return makeTagging(Config.getInstance().getXmppUserId(), resource, strings);
+		return makeTagging(Config.getXmppUserId(), resource, strings);
 	}
 
 	/**
@@ -330,7 +330,7 @@ public class Semantics {
 		query.setPrefixMapping(prefixMapping);
 
 		String queryString = ownTagsOnly ? queries.getProperty("query.alltagsby") : queries.getProperty("query.alltagsnotby");
-		queryString = queryString.replaceAll("###uri###", uri).replaceAll("###user###", Config.getInstance().getXmppUserId());
+		queryString = queryString.replaceAll("###uri###", uri).replaceAll("###user###", Config.getXmppUserId());
 
 		logger.debug("Constructed query: " + queryString);
 		return QueryFactory.parse(query, queryString, null, Syntax.syntaxSPARQL);
@@ -341,7 +341,7 @@ public class Semantics {
 		query.setPrefixMapping(prefixMapping);
 
 		String queryString = queries.getProperty("query.askfortaggingfor").replaceAll("###uri###", uri).replaceAll("###tag###", tag)
-				.replaceAll("###user###", Config.getInstance().getXmppUserId());
+				.replaceAll("###user###", Config.getXmppUserId());
 
 		return QueryFactory.parse(query, queryString, null, Syntax.syntaxSPARQL);
 	}
@@ -365,7 +365,7 @@ public class Semantics {
 
 	public String constructExportModel(Model model) {
 		Model export = createDefaultModel();
-		export.add(constructValidUserModel(model, Config.getInstance().getXmppUserId()));
+		export.add(constructValidUserModel(model, Config.getXmppUserId()));
 
 		StringWriter stringWriter = new StringWriter();
 		export.write(stringWriter, Semantics.RDF_EXPORT_FORMAT);

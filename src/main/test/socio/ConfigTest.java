@@ -7,21 +7,19 @@ import org.junit.Test;
 
 public class ConfigTest {
 
-	Config config;
-
 	@Before
 	public void setUp() throws Exception {
-		config = Config.getTestInstance();
+		Config.testmode();
 	}
 
 	@Test
 	public void testValidation() {
-		assertTrue(config.isValidXmppId("xmpp://validuser@domain.com"));
-		assertFalse(config.isValidXmppId("xmpp://user"));
-		assertFalse(config.isValidXmppId("user"));
-		assertFalse(config.isValidXmppId("user@domain"));
-		assertFalse(config.isValidXmppId(null));
-		assertFalse(config.isValidXmppId(""));
+		assertTrue(Config.isValidXmppId("xmpp://validuser@domain.com"));
+		assertFalse(Config.isValidXmppId("xmpp://user"));
+		assertFalse(Config.isValidXmppId("user"));
+		assertFalse(Config.isValidXmppId("user@domain"));
+		assertFalse(Config.isValidXmppId(null));
+		assertFalse(Config.isValidXmppId(""));
 	}
 
 }

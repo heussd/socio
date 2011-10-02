@@ -22,7 +22,7 @@ public class XmppClientTest {
 		// fail because of a missing unit config file.
 		has_junit_config = Config.class.getClassLoader().getResourceAsStream("junit.properties") != null ? true : false;
 
-		Config.getTestInstance();
+		Config.testmode();
 		semantics = new Semantics();
 	}
 
