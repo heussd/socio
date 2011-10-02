@@ -3,7 +3,7 @@
 function addNewTag($tag) {
   if ($tag == "") return;
   if ($tag == " ") return;
-  $.ajax({ url: "http://localhost:8080/socio/rest/addTag?uri=" + $currentUrl + "&tag='" + $tag + "'"})
+  $.ajax({ url: "http://localhost:8080/socio/rest/addTag?uri=" + escape($currentUrl) + "&tag='" + $tag + "'"})
 }
 
 
@@ -13,7 +13,7 @@ function displayUrl() {
 
 	// Ask for general knowledge
   	$.ajax({
-       url:"http://localhost:8080/socio/rest/knows?uri=" + $currentUrl,
+       url:"http://localhost:8080/socio/rest/knows?uri=" + escape($currentUrl),
        success: function(data, status) { 
        if (data == "true" ) {
          $("#currentUrl").removeClass("unknown");
@@ -28,7 +28,7 @@ function displayUrl() {
 }
 
 function buildTagList() {
-  $.getJSON('http://localhost:8080/socio/rest/queryUri?uri=' + $currentUrl, function(data) {
+  $.getJSON('http://localhost:8080/socio/rest/queryUri?uri=' + escape($currentUrl), function(data) {
 	  var items = [];
 	  
 	  $.each(data, function(key, val) {
@@ -43,7 +43,7 @@ function buildTagList() {
 	
   });
   
-  $.getJSON('http://localhost:8080/socio/rest/queryUri?own=false&uri=' + $currentUrl, function(data) {
+  $.getJSON('http://localhost:8080/socio/rest/queryUri?own=false&uri=' + escape($currentUrl), function(data) {
 	  var items = [];
 	  
 	  $.each(data, function(key, val) {
@@ -73,7 +73,7 @@ function openUrl(url) {
 }
 
 function buildRelatedList() {
-	$.getJSON('http://localhost:8080/socio/rest/queryRelated?uri=' + $currentUrl, function(data) {
+	$.getJSON('http://localhost:8080/socio/rest/queryRelated?uri=' + escape($currentUrl), function(data) {
 	  
 	  var items = [];
 	  
