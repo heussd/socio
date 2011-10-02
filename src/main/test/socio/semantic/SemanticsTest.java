@@ -16,7 +16,7 @@ public class SemanticsTest {
 	@Before
 	public void setUp() throws Exception {
 
-		Config.getTestInstance();
+		Config.testmode();
 		semantics = new Semantics();
 	}
 
@@ -31,7 +31,7 @@ public class SemanticsTest {
 		model.write(System.out, Semantics.RDF_EXPORT_FORMAT);
 
 		// Try to build a valid import model
-		model = semantics.constructValidUserModel(model, Config.getInstance().getXmppUserId());
+		model = semantics.constructValidUserModel(model, Config.getXmppUserId());
 		model.write(System.out, Semantics.RDF_EXPORT_FORMAT);
 		assertFalse(model.isEmpty());
 

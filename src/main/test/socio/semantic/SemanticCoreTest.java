@@ -22,7 +22,7 @@ public class SemanticCoreTest {
 
 	@Before
 	public void setUp() throws Exception {
-		Config.getTestInstance();
+		Config.testmode();
 
 		knownSubject = new URI("https://www.fbi.h-da.de/");
 		semantics = new Semantics();
@@ -81,7 +81,7 @@ public class SemanticCoreTest {
 		assertEquals("foreign", core.classifyKnowledgeAbout(newUrl));
 
 		// Now make the tagging known by the own user, too
-		model = semantics.makeTagging(Config.getTestInstance().getXmppUserId(), new URI("http://a.totally.random-uri.com"), "tag1");
+		model = semantics.makeTagging(Config.getXmppUserId(), new URI("http://a.totally.random-uri.com"), "tag1");
 		core.persistStatements(model, true);
 
 		assertEquals("both", core.classifyKnowledgeAbout(newUrl));
@@ -105,7 +105,7 @@ public class SemanticCoreTest {
 
 		System.out.println(core.getAllMyStatements());
 
-		 assertEquals(allMyStatements, core.getAllMyStatements());
+		assertEquals(allMyStatements, core.getAllMyStatements());
 	}
 
 	@Test
@@ -152,7 +152,7 @@ public class SemanticCoreTest {
 
 	@Test
 	public void testFrom() throws Exception {
-		SemanticCore.getInstance().passXmppMessage("", Config.getInstance().getXmppUserId());
+		SemanticCore.getInstance().passXmppMessage("", Config.getXmppUserId());
 	}
 
 	@Test
