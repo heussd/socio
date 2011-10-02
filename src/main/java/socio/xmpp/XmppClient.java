@@ -60,7 +60,7 @@ public class XmppClient {
 			if (packet instanceof Message) {
 				Message message = (Message) packet;
 
-				if (!message.getFrom().equals(Config.getInstance().getXmppUserId())) {
+				if (!message.getFrom().equals(Config.getXmppUserId())) {
 					for (Body body : message.getBodies()) {
 						if (body != null) {
 							// Sender-name is suffix'd by his resource. Cut it
@@ -93,7 +93,7 @@ public class XmppClient {
 	private Connection connection;
 
 	private XmppClient() {
-		bringUpClient(Config.getInstance().getUserName(), Config.getInstance().getPassword());
+		bringUpClient(Config.getUserName(), Config.getPassword());
 	}
 
 	private void bringUpClient(String userName, String password) {
@@ -102,11 +102,11 @@ public class XmppClient {
 		try {
 			ConnectionConfiguration config = null;
 
-			if (Config.getInstance().useProxy()) {
-				ProxyInfo proxy = new ProxyInfo(ProxyType.HTTP, Config.getInstance().getProxyAddress(), Config.getInstance().getProxyPort(), "", "");
-				config = new ConnectionConfiguration(Config.getInstance().getServerAddress(), Config.getInstance().getServerPort(), Config.getInstance().getServerAddress(), proxy);
+			if (Config.useProxy()) {
+				ProxyInfo proxy = new ProxyInfo(ProxyType.HTTP, Config.getProxyAddress(), Config.getProxyPort(), "", "");
+				config = new ConnectionConfiguration(Config.getServerAddress(), Config.getServerPort(), Config.getServerAddress(), proxy);
 			} else {
-				config = new ConnectionConfiguration(Config.getInstance().getServerAddress(), Config.getInstance().getServerPort(), Config.getInstance().getServerAddress());
+				config = new ConnectionConfiguration(Config.getServerAddress(), Config.getServerPort(), Config.getServerAddress());
 			}
 
 			connection = new XMPPConnection(config);
@@ -175,7 +175,7 @@ public class XmppClient {
 			jabberId = "xmpp://" + jabberId;
 
 		// Do basic checks
-		if (!Config.getInstance().isValidXmppId(jabberId)) {
+		if (!Config.isValidXmppId(jabberId)) {
 			logger.warn("Invalid XMPP ID: " + jabberId);
 			return false;
 		}

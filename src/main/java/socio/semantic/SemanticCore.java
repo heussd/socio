@@ -106,7 +106,7 @@ public class SemanticCore {
 
 	private void persistStore() {
 		if (storeNeedsWrite) {
-			if (!Config.getInstance().isReadonly()) {
+			if (!Config.isReadonly()) {
 				try {
 					logger.debug("Persisting store...");
 
@@ -338,7 +338,7 @@ public class SemanticCore {
 
 		logger.debug("Users that know " + subject + ": " + users);
 
-		if (!users.contains(Config.getInstance().getXmppUserId())) {
+		if (!users.contains(Config.getXmppUserId())) {
 			return "foreign";
 		}
 
@@ -465,8 +465,8 @@ public class SemanticCore {
 	public List<String> getAllMyStatements() {
 		List<String> statements = new ArrayList<String>();
 
-		logger.debug("Collecting all of " + Config.getInstance().getXmppUserId() + "'s statements...");
-		Model model = semantics.constructValidUserModel(rdfStore, Config.getInstance().getXmppUserId());
+		logger.debug("Collecting all of " + Config.getXmppUserId() + "'s statements...");
+		Model model = semantics.constructValidUserModel(rdfStore, Config.getXmppUserId());
 
 		// FIXME: To many warnings here :(
 		@SuppressWarnings({ "unchecked", "static-access" })

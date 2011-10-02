@@ -83,6 +83,8 @@ public class RestApi implements SocIoRestApi {
 
 	@Override
 	public Response addTag(String uri, String tag) {
+		
+		logger.info("TAG: '" + tag + "'");
 
 		// Remove tag delimiters (if necessary)
 		tag = tag.replaceAll("'", "").replace("\"", "");

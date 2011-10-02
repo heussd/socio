@@ -23,9 +23,9 @@ public class UpdateChecker {
 		Properties gitHubProperties = new Properties();
 
 		// Move this in the central config class
-		if (Config.getInstance().useProxy()) {
-			System.setProperty("proxyPort", "" + Config.getInstance().getProxyPort());
-			System.setProperty("proxyHost", Config.getInstance().getProxyAddress());
+		if (Config.useProxy()) {
+			System.setProperty("proxyPort", "" + Config.getProxyPort());
+			System.setProperty("proxyHost", Config.getProxyAddress());
 		}
 
 		try {
