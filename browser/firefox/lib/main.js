@@ -2,7 +2,8 @@ var data = require("self").data
 var tabs = require("tabs");
 var {Cc,Ci} = require("chrome");
 var ss = require("simple-storage");
-var pref = Cc['@mozilla.org/preferences-service;1'].getService(Ci.nsIPrefBranch);  
+var pref = Cc['@mozilla.org/preferences-service;1'].getService(Ci.nsIPrefBranch);
+var browserSearchService = Cc["@mozilla.org/browser/search-service;1"].getService(Ci.nsIBrowserSearchService)  
   
   
 try{
@@ -10,8 +11,17 @@ try{
      //You can change this value in about:config
      pref.getBoolPref('socIO.addBookmark');
   }catch(e){
+      console.log("Add socIO.addBookmark preference");
       pref.setBoolPref('socIO.addBookmark',true);
 }  
+
+console.log("Look if socIO Search provider is already installed");
+if (browserSearchService.getEngineByName("socIO") == null){
+      console.log("Add socIO Search provider");
+      browserSearchService.addEngineWithDetails("socIO", data.url("images/add.png"),"socio","Searches the SocIO Store for Activity feeds with the given tag","get","http://localhost:8080/socio/rest/activity?tag={searchTerms}");
+}  
+
+
 
 
 // docs: https://developer.mozilla.org/En/Places_Developer_Guide

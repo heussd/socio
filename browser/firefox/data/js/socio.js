@@ -45,18 +45,19 @@ function peerLoad(){
 
 self.port.on("sendTabToIndex",function(url){
           console.log("sendTabToIndex: " +url);
-          updateAddressbarIcon(url);
-          indexStart(url);
+          $currentUrl = escape(url);
+          updateAddressbarIcon($currentUrl);
+          indexStart($currentUrl);
 });
 
 self.port.on("sendTabToRelated",function(url){
-          updateAddressbarIcon(url);
-          relatedStart(url);
+          $currentUrl = escape(url);
+          updateAddressbarIcon($currentUrl);
+          relatedStart($currentUrl);
 });
 
   function indexStart(url) {
-      $currentUrl = url;
-      
+
       buildTagList();
       setTimeout(buildTagList,1000);
       
@@ -66,12 +67,13 @@ self.port.on("sendTabToRelated",function(url){
 
 
 function relatedStart(url) {
-  			$currentUrl = url;
   			
   			buildRelatedList();
   		}
 
 function addListeners(){
+
+
 
 document.getElementById("related").addEventListener('click',function (e) {
 
@@ -221,7 +223,7 @@ function buildTagList() {
 	
 	
   });
-
+  
 }
 
 
