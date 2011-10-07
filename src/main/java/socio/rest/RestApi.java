@@ -112,12 +112,21 @@ public class RestApi implements SocIoRestApi {
 	}
 
 	@Override
-	public Response activity(String tag) {
+	public Response activity(String tag, String user) {
 		// Remove tag delimiters (if necessary)
 		tag = tag.replaceAll("'", "").replace("\"", "");
 
-		ActivityFeed activityFeed = new ActivityFeed(tag);
-		activityFeed.addEntries(SemanticCore.getInstance().queryTagActivity(tag));
-		return CorsResponse.ok(activityFeed.toString());
+		if (!"".equals(tag)) {
+			ActivityFeed activityFeed = new ActivityFeed(tag);
+			activityFeed.addEntries(SemanticCore.getInstance().queryTagActivity(tag));
+			return CorsResponse.ok(activityFeed.toString());
+		} else if (!"".equals(user)) {
+			user = "xmpp://" + user;
+			ActivityFeed activityFeed = new ActivityFeed(user);
+			activityFeed.addEntries(SemanticCore.getInstance().queryUserActivity(user));
+			return CorsResponse.ok(activityFeed.toString());
+		}
+
+		return CorsResponse.badRequest();
 	}
 }

@@ -578,4 +578,33 @@ public class SemanticCore {
 		}
 		return activityEntries;
 	}
+
+	public List<ActivityEntry> queryUserActivity(String user) {
+		List<ActivityEntry> activityEntries = new ArrayList<ActivityEntry>();
+		Query query = semantics.buildUserActivityQuery(user);
+
+		QueryExecution qexec = null;
+		try {
+			qexec = QueryExecutionFactory.create(query, rdfStore);
+			ResultSet results = qexec.execSelect();
+
+			for (; results.hasNext();) {
+				QuerySolution rb = results.nextSolution();
+
+				logger.debug("Query result: " + rb);
+				String resource = rb.get("url").toString();
+				String date = rb.get("date").toString();
+				String tag = rb.get("tagname").toString();
+
+				ActivityEntry activityEntry = new ActivityEntry(resource, date, tag);
+				activityEntries.add(activityEntry);
+			}
+		} catch (Exception e) {
+			logger.error("Error while executing query:", e);
+		} finally {
+			if (qexec != null)
+				qexec.close();
+		}
+		return activityEntries;
+	}
 }

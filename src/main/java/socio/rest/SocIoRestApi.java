@@ -74,5 +74,5 @@ public interface SocIoRestApi {
 	@GET
 	@Path("/activity")
 	@Produces(MediaType.APPLICATION_XML)
-	public Response activity(@QueryParam("tag") String tag);
+	public Response activity(@QueryParam("tag") @DefaultValue("") String tag, @QueryParam("user") @DefaultValue("") String user);
 }

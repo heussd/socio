@@ -33,7 +33,40 @@ public class SemanticCoreTest {
 	}
 
 	@Test
-	public void testActivity() throws Exception {
+	public void testUserActivity() throws Exception {
+		SemanticCore core = SemanticCore.getInstance();
+		Semantics semantics = new Semantics();
+
+		String user = Config.getXmppUserId();
+
+		core.clear();
+		core.dumpStore();
+		core.persistStatements(semantics.constructDemoMessageModel(), true);
+
+		List<ActivityEntry> activityEntries = core.queryUserActivity(user);
+
+		assertEquals(4, activityEntries.size());
+
+		core.persistStatements(semantics.makeTagging(Config.getXmppUserId(), knownSubject, "arandomtag"), true);
+		core.dumpStore();
+
+		activityEntries = core.queryUserActivity(user);
+
+		assertEquals(5, activityEntries.size());
+
+		SemanticCore.getInstance().persistStatements(semantics.makeTagging("xmpp://anotheruser@example.com", knownSubject, "arandomtag"), true);
+		activityEntries = core.queryUserActivity("xmpp://anotheruser@example.com");
+
+		assertEquals(1, activityEntries.size());
+
+		ActivityFeed activityFeed = new ActivityFeed("TAG");
+		activityFeed.addEntries(activityEntries);
+		System.out.println(activityFeed.toString());
+
+	}
+
+	@Test
+	public void testTagActivity() throws Exception {
 		SemanticCore core = SemanticCore.getInstance();
 		Semantics semantics = new Semantics();
 
