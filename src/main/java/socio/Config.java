@@ -64,11 +64,11 @@ public class Config {
 
 		try {
 			properties = new Properties(defaultProperties);
+
 			InputStream propertiesFile = testmode ? Launcher.class.getClassLoader().getResourceAsStream("debug.properties") : new FileInputStream(pathfinder(FILE_NAME));
 			properties.load(propertiesFile);
 
 			Logger.getRootLogger().setLevel(Level.toLevel(properties.getProperty("rootlogger.level")));
-			LOGGER.debug("Loaded properties file " + propertiesFile);
 			LOGGER.debug("Set log level to " + properties.getProperty("rootlogger.level"));
 		} catch (Exception e) {
 			LOGGER.error("Could not load properties file", e);
