@@ -1,5 +1,6 @@
 package socio;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -34,6 +35,12 @@ public class Config {
 	}
 
 	private static final Logger LOGGER = Logger.getLogger(Config.class);
+
+	/**
+	 * Try to load the file from these ENV-variables. Descending order of
+	 * importance.
+	 */
+	private static final String[] SEARCH_PATHS = new String[] { "SOCIO_HOME", "USERPROFILE", "HOME", "APPDATA" };
 	private static final String FILE_NAME = "socio.properties";
 
 	private Properties properties;
@@ -57,7 +64,7 @@ public class Config {
 
 		try {
 			properties = new Properties(defaultProperties);
-			InputStream propertiesFile = testmode ? Launcher.class.getClassLoader().getResourceAsStream("debug.properties") : new FileInputStream(FILE_NAME);
+			InputStream propertiesFile = testmode ? Launcher.class.getClassLoader().getResourceAsStream("debug.properties") : new FileInputStream(pathfinder(FILE_NAME));
 			properties.load(propertiesFile);
 
 			Logger.getRootLogger().setLevel(Level.toLevel(properties.getProperty("rootlogger.level")));
@@ -133,6 +140,23 @@ public class Config {
 			return false;
 
 		return true;
+	}
+
+	/**
+	 * Tries to find the given file at several paths. Defaults to current
+	 * working directory.
+	 */
+	public String pathfinder(String filename) {
+		LOGGER.debug("Trying to find " + filename);
+		for (String path : SEARCH_PATHS) {
+			String probePath = System.getenv(path) + "/" + filename;
+			LOGGER.debug("Probing " + probePath);
+			if (new File(probePath).exists()) {
+				LOGGER.debug("Found properties file at " + probePath);
+				return probePath;
+			}
+		}
+		return filename;
 	}
 
 	// Generic getter methods
