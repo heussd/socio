@@ -162,7 +162,9 @@ jQuery.fn.sortElements = (function(){
 function updateAddressbarIcon(url, id) {
   // Catch multiple calls for the same url
   //if (url != lastUrl) {
-    lastUrl = url;
+    lastUrl = escape(url);
+    url = escape(url);
+    //alert(url);
 
     /*
     Fire a "What do you know about ...?"-request. The response is
