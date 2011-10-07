@@ -1,7 +1,6 @@
 package socio.rest;
 
 import java.net.URI;
-import java.net.URLEncoder;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
@@ -17,7 +16,6 @@ import socio.semantic.SemanticCore;
 import socio.xmpp.XmppClient;
 
 public class RestApi implements SocIoRestApi {
-	private static final String URI_ENCODING = "UTF-8";
 	private static Logger logger = Logger.getLogger(RestApi.class);
 
 	@GET
@@ -52,11 +50,10 @@ public class RestApi implements SocIoRestApi {
 
 	@Override
 	public Response knows(String uri) {
+		logger.debug("Received ask for knowledge on:" + uri);
 		try {
-			uri = URLEncoder.encode(uri, URI_ENCODING);
-			logger.debug("Received ask for knowledge on:" + uri);
 			logger.debug("Querying semantic core...");
-			uri = URLEncoder.encode(uri, URI_ENCODING);
+
 			return CorsResponse.ok(SemanticCore.getInstance().classifyKnowledgeAbout(new URI(uri)));
 
 		} catch (Exception e) {
@@ -80,43 +77,28 @@ public class RestApi implements SocIoRestApi {
 
 	@Override
 	public Response queryUri(String uri, Boolean ownTags) {
-		try {
-			uri = URLEncoder.encode(uri, URI_ENCODING);
-			logger.debug("Tag query for uri " + uri + ", own tags = " + ownTags);
-			return CorsResponse.ok(new JSONArray(SemanticCore.getInstance().queryTagsForUri(uri, ownTags)).toString());
-		} catch (Exception e) {
-			logger.error("Could not query URI " + uri, e);
-		}
-		return CorsResponse.badRequest();
+		logger.debug("Tag query for uri " + uri + ", own tags = " + ownTags);
+		return CorsResponse.ok(new JSONArray(SemanticCore.getInstance().queryTagsForUri(uri, ownTags)).toString());
 	}
 
 	@Override
 	public Response addTag(String uri, String tag) {
 		// Remove tag / url delimiters (if necessary)
-		// TODO: Is this still needed?
 		tag = tag.replaceAll("'", "").replaceAll("\"", "");
 		uri = uri.replaceAll("'", "").replaceAll("\"", "");
 
-		try {
-			uri = URLEncoder.encode(uri, URI_ENCODING);
-
-			if (!tag.equals("")) {
-				logger.debug("Add tag " + tag + " to resource " + uri);
-				SemanticCore.getInstance().addTags(uri, new String[] { tag });
-			} else {
-				logger.debug("Tag was empty, will not add.");
-			}
-			return CorsResponse.ok();
-		} catch (Exception e) {
-			logger.error("Could not add tag + " + tag + " to uri " + uri, e);
+		if (!tag.equals("")) {
+			logger.debug("Add tag " + tag + " to resource " + uri);
+			SemanticCore.getInstance().addTags(uri, new String[] { tag });
+		} else {
+			logger.debug("Tag was empty, will not add.");
 		}
-		return CorsResponse.badRequest();
+		return CorsResponse.ok();
 	}
 
 	@Override
 	public Response queryRelated(String uri, Boolean ownFlag) {
 		try {
-			uri = URLEncoder.encode(uri, URI_ENCODING);
 			return CorsResponse.ok(new JSONObject(SemanticCore.getInstance().queryRelatedUris(new URI(uri), ownFlag)));
 		} catch (Exception e) {
 			logger.error("Could not query related uris:", e);

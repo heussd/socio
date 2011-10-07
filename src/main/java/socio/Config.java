@@ -40,6 +40,14 @@ public class Config {
 	private Properties defaultProperties;
 
 	private Config(Boolean testmode) {
+		loadPropertiesFile(testmode);
+
+		while (!testmode && !isValidXmppId(properties.getProperty("xmpp.user"))) {
+			setupWizard();
+		}
+	}
+
+	private void loadPropertiesFile(Boolean testmode) {
 		try {
 			defaultProperties = new Properties();
 			defaultProperties.load(Launcher.class.getClassLoader().getResourceAsStream("default.properties"));
@@ -53,14 +61,10 @@ public class Config {
 			properties.load(propertiesFile);
 
 			Logger.getRootLogger().setLevel(Level.toLevel(properties.getProperty("rootlogger.level")));
-			LOGGER.debug("Loaded properties file " + propertiesFile);
-			LOGGER.debug("Set log level to " + properties.getProperty("rootlogger.level"));
+			// LOGGER.info("Loaded properties file " + propertiesFile);
+			LOGGER.info("Set log level to " + properties.getProperty("rootlogger.level"));
 		} catch (Exception e) {
 			LOGGER.error("Could not load properties file", e);
-		}
-
-		while (!testmode && !isValidXmppId(properties.getProperty("xmpp.user"))) {
-			setupWizard();
 		}
 	}
 
@@ -104,11 +108,12 @@ public class Config {
 		}
 	}
 
-	public static void parseCommandline(String[] args) {
+	public void parseCommandline(String[] args) {
 		for (String parameter : args) {
-			LOGGER.info("Manual overwrite: " + parameter + " = true");
+			LOGGER.info("Manual override: " + parameter + " = true");
 			Config.getInstance().properties.setProperty(parameter, "true");
 		}
+		loadPropertiesFile(properties.getProperty("debug").equals("true"));
 	}
 
 	/**
