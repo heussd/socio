@@ -113,7 +113,7 @@ public class Config {
 			LOGGER.info("Manual overwrite: " + parameter + " = true");
 			Config.getInstance().properties.setProperty(parameter, "true");
 		}
-		
+
 		loadProperties(isDebug());
 	}
 
@@ -207,6 +207,10 @@ public class Config {
 
 	public static boolean disableTray() {
 		return getBooleanProperty("disabletray");
+	}
+
+	public static String getRdfStoreFile() {
+		return getStringProperty("rdf.file");
 	}
 
 }

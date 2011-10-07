@@ -53,7 +53,7 @@ public class SemanticCore {
 	private static Logger logger = Logger.getLogger(SemanticCore.class);
 	private static Semantics semantics = new Semantics();
 
-	private static File RDF_STORAGE_FILE = new File("store.rdf");
+	private static File RDF_STORAGE_FILE;
 	private boolean storeNeedsWrite = false;
 
 	/**
@@ -63,6 +63,8 @@ public class SemanticCore {
 
 	private SemanticCore() {
 		logger.info("Bringing up semantic core...");
+
+		RDF_STORAGE_FILE = new File(Config.getRdfStoreFile());
 
 		rdfStore = semantics.createDefaultModel();
 
