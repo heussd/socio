@@ -3,8 +3,6 @@ package socio;
 import org.apache.log4j.Logger;
 
 import socio.rest.RestLauncher;
-import socio.semantic.SemanticCore;
-import socio.semantic.Semantics;
 import socio.tray.Tray;
 import socio.xmpp.XmppClient;
 
@@ -23,18 +21,12 @@ public class Launcher {
 	public static void main(String[] args) {
 		logger.info("T.H. SocIO Semantic Resource Manager");
 
-		Config.parseCommandline(args);
+		Config.getInstance().parseCommandline(args);
 
 		try {
 
 			if (!Config.isHeadless())
 				new RestLauncher();
-
-			// Early start of the semantic core when in debug mode
-			if (Config.isDebug()) {
-				// TODO: Use a dedicated rdf store for debug here
-				SemanticCore.getInstance().clear().persistStatements(new Semantics().constructDemoMessageModel(), true);
-			}
 
 			if (!Config.isOffline()) {
 				// Trigger XMPP client

@@ -51,9 +51,11 @@ public class RestApi implements SocIoRestApi {
 	@Override
 	public Response knows(String uri) {
 		logger.debug("Received ask for knowledge on:" + uri);
+
 		try {
 			logger.debug("Querying semantic core...");
 
+			uri = uri.replaceAll(" ", "+");
 			return CorsResponse.ok(SemanticCore.getInstance().classifyKnowledgeAbout(new URI(uri)));
 
 		} catch (Exception e) {
@@ -77,6 +79,7 @@ public class RestApi implements SocIoRestApi {
 
 	@Override
 	public Response queryUri(String uri, Boolean ownTags) {
+		uri = uri.replaceAll(" ", "+");
 		logger.debug("Tag query for uri " + uri + ", own tags = " + ownTags);
 		return CorsResponse.ok(new JSONArray(SemanticCore.getInstance().queryTagsForUri(uri, ownTags)).toString());
 	}
@@ -86,6 +89,7 @@ public class RestApi implements SocIoRestApi {
 		// Remove tag / url delimiters (if necessary)
 		tag = tag.replaceAll("'", "").replaceAll("\"", "");
 		uri = uri.replaceAll("'", "").replaceAll("\"", "");
+		uri = uri.replaceAll(" ", "+");
 
 		if (!tag.equals("")) {
 			logger.debug("Add tag " + tag + " to resource " + uri);
@@ -98,6 +102,7 @@ public class RestApi implements SocIoRestApi {
 
 	@Override
 	public Response queryRelated(String uri, Boolean ownFlag) {
+		uri = uri.replaceAll(" ", "+");
 		try {
 			return CorsResponse.ok(new JSONObject(SemanticCore.getInstance().queryRelatedUris(new URI(uri), ownFlag)));
 		} catch (Exception e) {

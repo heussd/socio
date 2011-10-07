@@ -40,6 +40,14 @@ public class Config {
 	private Properties defaultProperties;
 
 	private Config(Boolean testmode) {
+		loadProperties(testmode);
+
+		while (!testmode && !isValidXmppId(properties.getProperty("xmpp.user"))) {
+			setupWizard();
+		}
+	}
+
+	private void loadProperties(Boolean testmode) {
 		try {
 			defaultProperties = new Properties();
 			defaultProperties.load(Launcher.class.getClassLoader().getResourceAsStream("default.properties"));
@@ -57,10 +65,6 @@ public class Config {
 			LOGGER.debug("Set log level to " + properties.getProperty("rootlogger.level"));
 		} catch (Exception e) {
 			LOGGER.error("Could not load properties file", e);
-		}
-
-		while (!testmode && !isValidXmppId(properties.getProperty("xmpp.user"))) {
-			setupWizard();
 		}
 	}
 
@@ -104,11 +108,13 @@ public class Config {
 		}
 	}
 
-	public static void parseCommandline(String[] args) {
+	public void parseCommandline(String[] args) {
 		for (String parameter : args) {
 			LOGGER.info("Manual overwrite: " + parameter + " = true");
 			Config.getInstance().properties.setProperty(parameter, "true");
 		}
+		
+		loadProperties(isDebug());
 	}
 
 	/**
