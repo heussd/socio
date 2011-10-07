@@ -14,6 +14,7 @@ import java.awt.event.ActionListener;
 import org.apache.log4j.Logger;
 
 import socio.Config;
+import socio.UpdateChecker;
 
 /**
  * http://java.sun.com/developer/technicalArticles/J2SE/Desktop/javase6/
@@ -53,18 +54,26 @@ public class Tray {
 
 			SystemTray tray = SystemTray.getSystemTray();
 			Image image = Toolkit.getDefaultToolkit().getImage(Tray.class.getClassLoader().getResource("socio_icon.png"));
+			PopupMenu popup = new PopupMenu();
 
-			ActionListener exitListener = new ActionListener() {
+			MenuItem versionCheckMenuItem = new MenuItem("Check for updates...");
+			versionCheckMenuItem.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent e) {
-					System.out.println("Exiting...");
+					UpdateChecker.updateAvailable();
+				}
+			});
+
+			MenuItem exitMenuItem = new MenuItem("Exit");
+			exitMenuItem.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
 					System.exit(0);
 				}
-			};
+			});
 
-			PopupMenu popup = new PopupMenu();
-			MenuItem defaultItem = new MenuItem("Exit");
-			defaultItem.addActionListener(exitListener);
-			popup.add(defaultItem);
+			popup.add(versionCheckMenuItem);
+			popup.add(exitMenuItem);
 
 			trayIcon = new TrayIcon(image, "SocIO Tray Icon", popup);
 			trayIcon.setImageAutoSize(true);
