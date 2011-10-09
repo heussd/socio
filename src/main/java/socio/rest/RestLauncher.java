@@ -31,7 +31,7 @@ public class RestLauncher {
 		try {
 			logger.info("Bringing up RESTful API...");
 
-			httpServer = HttpServer.create(new InetSocketAddress(port), 25);
+			httpServer = HttpServer.create(new InetSocketAddress("localhost", port), 25);
 			httpContext = httpServer.createContext("/socio");
 
 			HttpHandler httpHandler = RuntimeDelegate.getInstance().createEndpoint(new Application() {
