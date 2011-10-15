@@ -173,6 +173,10 @@ public class Config {
 		return getProperty(key) != null && getProperty(key).equals("true");
 	}
 
+	private static int getIntegerProperty(String key) {
+		return (getProperty(key) != null ? new Integer(getProperty(key)) : 0);
+	}
+
 	// Getter methods for specific settings
 
 	public static String getRootLogLevel() {
@@ -235,6 +239,10 @@ public class Config {
 
 	public static String getRdfStoreFile() {
 		return getStringProperty("rdf.file");
+	}
+
+	public static int getRestPort() {
+		return getIntegerProperty("rest.port");
 	}
 
 }

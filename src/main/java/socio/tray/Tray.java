@@ -30,27 +30,19 @@ public class Tray {
 	 * {@link http://de.wikibooks.org/wiki/Java_Standard:_Muster_Singleton}.
 	 */
 	private static final class InstanceHolder {
-		static final Tray INSTANCE = new Tray();
+		static Tray INSTANCE = new Tray();
 	}
 
 	public static Tray getInstance() {
 		return InstanceHolder.INSTANCE;
 	}
 
-	public static void start() {
-		if (!Config.isHeadless()) {
-			getInstance();
-		} else {
-			LOGGER.warn("System is headless, will not display tray icon!");
-		}
-	}
-
 	private static final Logger LOGGER = Logger.getLogger(Tray.class);
-
 	private TrayIcon trayIcon;
 
 	private Tray() {
 		if (!Config.disableTray() && SystemTray.isSupported()) {
+			LOGGER.info("Bringing up tray...");
 
 			SystemTray tray = SystemTray.getSystemTray();
 			Image image = Toolkit.getDefaultToolkit().getImage(Tray.class.getClassLoader().getResource("socio_icon.png"));
@@ -80,10 +72,13 @@ public class Tray {
 
 			try {
 				tray.add(trayIcon);
+				LOGGER.info("Tray is up...");
 			} catch (AWTException e) {
 				System.err.println("TrayIcon could not be added.");
 			}
 
+		} else {
+			LOGGER.warn("Tray is disabled.");
 		}
 	}
 

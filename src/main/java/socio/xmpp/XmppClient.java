@@ -93,79 +93,73 @@ public class XmppClient {
 	private Connection connection;
 
 	private XmppClient() {
-		bringUpClient(Config.getUserName(), Config.getPassword());
+		ConnectionConfiguration config = null;
+
+		if (Config.useProxy()) {
+			ProxyInfo proxy = new ProxyInfo(ProxyType.HTTP, Config.getProxyAddress(), Config.getProxyPort(), "", "");
+			config = new ConnectionConfiguration(Config.getServerAddress(), Config.getServerPort(), Config.getServerAddress(), proxy);
+		} else {
+			config = new ConnectionConfiguration(Config.getServerAddress(), Config.getServerPort(), Config.getServerAddress());
+		}
+
+		connection = new XMPPConnection(config);
 	}
 
-	private void bringUpClient(String userName, String password) {
+	public void bringUpClient(String userName, String password) throws Exception {
 		logger.info("Bringing up XMPP client...");
 
-		try {
-			ConnectionConfiguration config = null;
+		connection.connect();
+		connection.login(userName, password, "srp");
 
-			if (Config.useProxy()) {
-				ProxyInfo proxy = new ProxyInfo(ProxyType.HTTP, Config.getProxyAddress(), Config.getProxyPort(), "", "");
-				config = new ConnectionConfiguration(Config.getServerAddress(), Config.getServerPort(), Config.getServerAddress(), proxy);
-			} else {
-				config = new ConnectionConfiguration(Config.getServerAddress(), Config.getServerPort(), Config.getServerAddress());
+		if (connection.getRoster().getEntries().size() == 0)
+			logger.warn("There are no entries on the roster");
+
+		logger.debug("Starting XMPP packet listener...");
+		connection.addPacketListener(SOCIO_PACKET_LISTENER, new PacketTypeFilter(Message.class));
+
+		logger.debug("XMPP subscription mode = " + connection.getRoster().getSubscriptionMode());
+
+		logger.debug("Starting XMPP roster event listener...");
+		connection.getRoster().addRosterListener(new RosterListener() {
+
+			@Override
+			public void presenceChanged(Presence arg0) {
+				// Ignore this event
 			}
 
-			connection = new XMPPConnection(config);
+			@Override
+			public void entriesUpdated(Collection<String> arg0) {
+				// Ignore this event
+			}
 
-			connection.connect();
-			connection.login(userName, password, "srp");
-
-			if (connection.getRoster().getEntries().size() == 0)
-				logger.warn("There are no entries on the roster");
-
-			logger.debug("Starting XMPP packet listener...");
-			connection.addPacketListener(SOCIO_PACKET_LISTENER, new PacketTypeFilter(Message.class));
-
-			logger.debug("XMPP subscription mode = " + connection.getRoster().getSubscriptionMode());
-
-			logger.debug("Starting XMPP roster event listener...");
-			connection.getRoster().addRosterListener(new RosterListener() {
-
-				@Override
-				public void presenceChanged(Presence arg0) {
-					// Ignore this event
+			@Override
+			public void entriesDeleted(Collection<String> arg0) {
+				for (String deletedEntry : arg0) {
+					logger.info("Entry was deleted from the roster: " + deletedEntry);
 				}
+			}
 
-				@Override
-				public void entriesUpdated(Collection<String> arg0) {
-					// Ignore this event
-				}
+			@Override
+			public void entriesAdded(Collection<String> arg0) {
+				for (String addedEntry : arg0) {
+					logger.info("Entry was added to the roster: " + addedEntry);
+					logger.debug("Sending my statements to user " + addedEntry);
 
-				@Override
-				public void entriesDeleted(Collection<String> arg0) {
-					for (String deletedEntry : arg0) {
-						logger.info("Entry was deleted from the roster: " + deletedEntry);
+					// Send each resource by its own - because we don't know
+					// the maximum XMPP message size, sending the entire RDF
+					// store at once is not an option.
+					List<String> statements = SemanticCore.getInstance().getAllMyStatements();
+					for (int i = 0; i < statements.size(); i++) {
+						logger.info("Sending statement " + (1 + i) + "/" + statements.size() + " ...");
+						sendQuietly(addedEntry, statements.get(i));
 					}
+
 				}
+			}
 
-				@Override
-				public void entriesAdded(Collection<String> arg0) {
-					for (String addedEntry : arg0) {
-						logger.info("Entry was added to the roster: " + addedEntry);
-						logger.debug("Sending my statements to user " + addedEntry);
+		});
 
-						// Send each resource by its own - because we don't know
-						// the maximum XMPP message size, sending the entire RDF
-						// store at once is not an option.
-						List<String> statements = SemanticCore.getInstance().getAllMyStatements();
-						for (int i = 0; i < statements.size(); i++) {
-							logger.info("Sending statement " + (1 + i) + "/" + statements.size() + " ...");
-							sendQuietly(addedEntry, statements.get(i));
-						}
-
-					}
-				}
-
-			});
-
-			logger.info("XMPP client is up.");
-		} catch (Exception e) {
-			logger.error("Could not bring up XMPP client:", e);
-		}
+		logger.info("XMPP client is up.");
 	}
 
 	public boolean addUser(String jabberId) {
@@ -235,11 +229,6 @@ public class XmppClient {
 		Chat chat = connection.getChatManager().createChat(user, NULL_MESSAGE_LISTENER);
 		chat.removeMessageListener(NULL_MESSAGE_LISTENER);
 		chat.sendMessage(body);
-
-		// Message message = new Message(user, Message.Type.chat);
-		// message.setBody(body);
-		// connection.sendPacket(message);
-
 	}
 
 	/**

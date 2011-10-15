@@ -19,15 +19,7 @@ public class RestLauncher {
 	private HttpServer httpServer;
 	private HttpContext httpContext;
 
-	public RestLauncher() {
-		bringUpRestApi(8080);
-	}
-
-	public RestLauncher(int port) {
-		bringUpRestApi(port);
-	}
-
-	private void bringUpRestApi(int port) {
+	public void bringUpRestApi(int port) throws Exception {
 		try {
 			logger.info("Bringing up RESTful API...");
 
@@ -41,8 +33,6 @@ public class RestLauncher {
 					Set<Class<?>> classes = new HashSet<Class<?>>();
 
 					classes.add(RestApi.class);
-					// classes.add(SocIoSimpleEcho.class);
-
 					return classes;
 				}
 			}, HttpHandler.class);
@@ -51,7 +41,7 @@ public class RestLauncher {
 			httpServer.start();
 			logger.info("RESTful API is up.");
 		} catch (Exception e) {
-			logger.error("Could not bring up RESTful API:", e);
+			throw new Exception("Could not bring up RESTful API:", e);
 		}
 	}
 }
