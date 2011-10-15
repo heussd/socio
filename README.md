@@ -36,6 +36,14 @@ Build mantra
 3. Runnable JAR-file located at `target/socio-x.x.x-jar-with-dependencies.jar`
 4. See folder `browser` for browser-integration
 
+
+Update mantra
+-------------
+1. `git pull`
+2. `mvn package`
+3. Runnable JAR-file located at `target/socio-x.x.x-jar-with-dependencies.jar`
+4. See folder `browser` for browser-integration
+
 Usage
 -----
 
