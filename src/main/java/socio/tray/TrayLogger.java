@@ -28,12 +28,14 @@ public class TrayLogger extends AppenderSkeleton {
 
 		switch (loggingEvent.getLevel().toInt()) {
 		case Level.WARN_INT:
-			Tray.getInstance().warn(message);
+			if (Tray.getInstance() != null)
+				Tray.getInstance().warn(message);
 			break;
 		case Level.ERROR_INT:
 		case Level.FATAL_INT:
 			// ERROR == FATAL notifications
-			Tray.getInstance().error(message);
+			if (Tray.getInstance() != null)
+				Tray.getInstance().error(message);
 			break;
 		default:
 			break;
