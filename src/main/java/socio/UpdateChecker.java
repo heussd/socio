@@ -32,7 +32,7 @@ public class UpdateChecker {
 			packagedProperties.load(UpdateChecker.class.getClassLoader().getResourceAsStream("version.properties"));
 			gitHubProperties.load(new URL(GITHUB_VERSION_PROPERTIES).openStream());
 
-			LOGGER.debug("This is version #" + packagedProperties.get("version"));
+			LOGGER.info("This is version #" + packagedProperties.get("version"));
 
 			if (!packagedProperties.get("version").equals(gitHubProperties.get("version"))) {
 				LOGGER.warn("New version available: Version #" + gitHubProperties.get("version"));

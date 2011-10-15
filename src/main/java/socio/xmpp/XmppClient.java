@@ -200,15 +200,19 @@ public class XmppClient {
 	 * Broadcasts the message to every user on the roster.
 	 */
 	public void broadcast(String message) {
-		// http://stackoverflow.com/questions/3279057/problem-adding-buddy-with-smack-api-and-openfire-server
-		try {
-			for (RosterEntry rosterEntry : connection.getRoster().getEntries()) {
-				String user = rosterEntry.getUser();
-				logger.debug("Broadcasting to user " + user + "...");
-				send(user, message);
+		if (!Config.isOffline()) {
+			// http://stackoverflow.com/questions/3279057/problem-adding-buddy-with-smack-api-and-openfire-server
+			try {
+				for (RosterEntry rosterEntry : connection.getRoster().getEntries()) {
+					String user = rosterEntry.getUser();
+					logger.debug("Broadcasting to user " + user + "...");
+					send(user, message);
+				}
+			} catch (Exception e) {
+				logger.error("Could not broadcast message", e);
 			}
-		} catch (Exception e) {
-			logger.error("Could not broadcast message", e);
+		} else {
+			logger.warn("System in offline mode, will not broadcast!");
 		}
 	}
 
@@ -217,6 +221,11 @@ public class XmppClient {
 	 * 
 	 */
 	public void send(String user, String body) throws Exception {
+		if (Config.isOffline()) {
+			logger.warn("System in offline mode, will not send message!");
+			return;
+		}
+
 		logger.debug("Sending message to user " + user + "...");
 
 		if (body.toCharArray().length * 2 / 1024 > MAX_MESSAGE_SIZE_IN_KB) {

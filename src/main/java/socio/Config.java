@@ -117,11 +117,9 @@ public class Config {
 
 	public void parseCommandline(String[] args) {
 		for (String parameter : args) {
-			LOGGER.info("Manual overwrite: " + parameter + " = true");
+			LOGGER.info("Manual override: " + parameter + " = true");
 			Config.getInstance().properties.setProperty(parameter, "true");
 		}
-
-		loadProperties(isDebug());
 	}
 
 	/**

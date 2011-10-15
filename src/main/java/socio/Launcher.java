@@ -48,6 +48,7 @@ public class Launcher {
 
 		} catch (Exception e) {
 			logger.error("Could not start SocIO", e);
+			logger.error("Terminating SocIO because of errors in the initialization process.");
 			System.exit(1);
 		}
 	}
