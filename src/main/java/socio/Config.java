@@ -186,8 +186,7 @@ public class Config {
 	}
 
 	public static int getProxyPort() {
-		// TODO Hardcoded: Proxy Port config setting is hardcoded to 80.
-		return 80;
+		return getIntegerProperty("proxy.port");
 	}
 
 	public static String getServerAddress() {
@@ -199,8 +198,7 @@ public class Config {
 	}
 
 	public static int getServerPort() {
-		// TODO: Hardcoded: Port config setting is hardcoded to 5222.
-		return 5222;
+		return getIntegerProperty("xmpp.server.port");
 	}
 
 	public static String getXmppUserId() {
