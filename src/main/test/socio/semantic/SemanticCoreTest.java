@@ -1,11 +1,14 @@
 package socio.semantic;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
+import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -34,6 +37,24 @@ public class SemanticCoreTest {
 	}
 
 	@Test
+	public void testLastMod() throws Exception {
+		core = SemanticCore.getInstance();
+		core.clear();
+
+		core.persistStatements(semantics.constructDemoMessageModel());
+
+		FileUtils.touch(new File(Config.getRdfStoreFile()));
+
+		core.clear();
+
+		assertFalse("none".equals(core.classifyKnowledgeAbout(knownSubject)));
+
+		core.dumpStore();
+
+		System.exit(0);
+	}
+
+	@Test
 	public void testStrangeUris() throws Exception {
 		// This is an invalid URI, according to
 		// http://stackoverflow.com/questions/40568/square-brackets-in-urls
@@ -41,7 +62,7 @@ public class SemanticCoreTest {
 		assertEquals("none", core.classifyKnowledgeAbout(uri));
 
 		core.persistStatements(semantics.makeTagging(Config.getXmppUserId(), uri, "test"));
-		
+
 		assertEquals("own", core.classifyKnowledgeAbout(uri));
 	}
 

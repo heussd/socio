@@ -56,6 +56,8 @@ public class SemanticCore {
 	private static File RDF_STORAGE_FILE;
 	private boolean storeNeedsWrite = false;
 
+	private Long rdfStoreLastModification;
+
 	/**
 	 * Jena specific settings
 	 */
@@ -77,6 +79,7 @@ public class SemanticCore {
 
 		logger.debug("Reading RDF store from file...");
 		if (RDF_STORAGE_FILE.exists()) {
+			this.rdfStoreLastModification = RDF_STORAGE_FILE.lastModified();
 			rdfStore.read(RDF_STORAGE_FILE.toURI().toString(), Semantics.RDF_EXPORT_FORMAT);
 		} else {
 			try {
@@ -108,6 +111,15 @@ public class SemanticCore {
 
 	private void persistStore() {
 		if (storeNeedsWrite) {
+			// Check if there happend a silent update
+			if (RDF_STORAGE_FILE.lastModified() != rdfStoreLastModification) {
+				logger.debug("There happend a silent update on the store.");
+
+				logger.debug("Reading RDF store from file...");
+				this.rdfStoreLastModification = RDF_STORAGE_FILE.lastModified();
+				rdfStore.read(RDF_STORAGE_FILE.toURI().toString(), Semantics.RDF_EXPORT_FORMAT);
+			}
+
 			if (!Config.isReadonly()) {
 				try {
 					logger.debug("Persisting store...");
