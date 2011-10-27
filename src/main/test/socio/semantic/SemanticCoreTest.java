@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import socio.Config;
+import socio.rest.URIFactory;
 import socio.rss.ActivityEntry;
 import socio.rss.ActivityFeed;
 
@@ -30,6 +31,18 @@ public class SemanticCoreTest {
 		core = SemanticCore.getInstance();
 		core.clear();
 		core.persistStatements(semantics.constructDemoMessageModel(), true);
+	}
+
+	@Test
+	public void testStrangeUris() throws Exception {
+		// This is an invalid URI, according to
+		// http://stackoverflow.com/questions/40568/square-brackets-in-urls
+		URI uri = URIFactory.getUri("http://soundcloud.com/search?q[fulltext]=balkan");
+		assertEquals("none", core.classifyKnowledgeAbout(uri));
+
+		core.persistStatements(semantics.makeTagging(Config.getXmppUserId(), uri, "test"));
+		
+		assertEquals("own", core.classifyKnowledgeAbout(uri));
 	}
 
 	@Test
