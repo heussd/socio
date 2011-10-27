@@ -317,7 +317,7 @@ public class SemanticCore {
 		List<String> users = new ArrayList<String>();
 		QueryExecution qexec = null;
 		try {
-			qexec = QueryExecutionFactory.create(semantics.buildTaggingByQuery(subject.toASCIIString()), rdfStore);
+			qexec = QueryExecutionFactory.create(semantics.buildTaggingByQuery(subject.toString()), rdfStore);
 
 			ResultSet results = qexec.execSelect();
 

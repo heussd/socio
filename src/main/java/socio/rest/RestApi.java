@@ -49,17 +49,17 @@ public class RestApi implements SocIoRestApi {
 	}
 
 	@Override
-	public Response knows(String uri) {
-		logger.debug("Received ask for knowledge on:" + uri);
+	public Response knows(String uriString) {
+		logger.debug("Received ask for knowledge on: " + uriString);
 
 		try {
+			URI uri = URIFactory.getUri(uriString);
 			logger.debug("Querying semantic core...");
 
-			uri = uri.replaceAll(" ", "+");
-			return CorsResponse.ok(SemanticCore.getInstance().classifyKnowledgeAbout(new URI(uri)));
+			return CorsResponse.ok(SemanticCore.getInstance().classifyKnowledgeAbout(uri));
 
 		} catch (Exception e) {
-			logger.error("Could not query for knowledge on " + uri, e);
+			logger.error("Could not query for knowledge on " + uriString, e);
 		}
 		return CorsResponse.badRequest();
 
@@ -79,7 +79,7 @@ public class RestApi implements SocIoRestApi {
 
 	@Override
 	public Response queryUri(String uri, Boolean ownTags) {
-		uri = uri.replaceAll(" ", "+");
+		uri = URIFactory.getUriSilent(uri).toString();
 		logger.debug("Tag query for uri " + uri + ", own tags = " + ownTags);
 		return CorsResponse.ok(new JSONArray(SemanticCore.getInstance().queryTagsForUri(uri, ownTags)).toString());
 	}
@@ -89,7 +89,7 @@ public class RestApi implements SocIoRestApi {
 		// Remove tag / url delimiters (if necessary)
 		tag = tag.replaceAll("'", "").replaceAll("\"", "");
 		uri = uri.replaceAll("'", "").replaceAll("\"", "");
-		uri = uri.replaceAll(" ", "+");
+		uri = URIFactory.getUriSilent(uri).toString();
 
 		if (!tag.equals("")) {
 			logger.debug("Add tag " + tag + " to resource " + uri);
@@ -102,9 +102,8 @@ public class RestApi implements SocIoRestApi {
 
 	@Override
 	public Response queryRelated(String uri, Boolean ownFlag) {
-		uri = uri.replaceAll(" ", "+");
 		try {
-			return CorsResponse.ok(new JSONObject(SemanticCore.getInstance().queryRelatedUris(new URI(uri), ownFlag)));
+			return CorsResponse.ok(new JSONObject(SemanticCore.getInstance().queryRelatedUris(URIFactory.getUri(uri), ownFlag)));
 		} catch (Exception e) {
 			logger.error("Could not query related uris:", e);
 		}
