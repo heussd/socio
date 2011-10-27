@@ -46,15 +46,15 @@ public class Config {
 	private Properties properties;
 	private Properties defaultProperties;
 
-	private Config(Boolean testmode) {
-		loadProperties(testmode);
+	private Config(Boolean forceDebug) {
+		loadProperties(forceDebug);
 
-		while (!testmode && !isValidXmppId(properties.getProperty("xmpp.user"))) {
+		while (!forceDebug && !isValidXmppId(properties.getProperty("xmpp.user"))) {
 			setupWizard();
 		}
 	}
 
-	private void loadProperties(Boolean testmode) {
+	private void loadProperties(Boolean forceDebug) {
 		try {
 			defaultProperties = new Properties();
 			defaultProperties.load(Launcher.class.getClassLoader().getResourceAsStream("default.properties"));
@@ -63,9 +63,11 @@ public class Config {
 		}
 
 		try {
-			properties = new Properties(defaultProperties);
+			if (properties == null)
+				properties = new Properties(defaultProperties);
 
-			InputStream propertiesFile = testmode ? Launcher.class.getClassLoader().getResourceAsStream("debug.properties") : new FileInputStream(pathfinder(FILE_NAME));
+			InputStream propertiesFile = (properties.getProperty("debug").equals("true") || forceDebug) ? Launcher.class.getClassLoader().getResourceAsStream("debug.properties")
+					: new FileInputStream(pathfinder(FILE_NAME));
 			properties.load(propertiesFile);
 
 			Logger.getRootLogger().setLevel(Level.toLevel(properties.getProperty("rootlogger.level")));
@@ -120,6 +122,8 @@ public class Config {
 			LOGGER.info("Manual override: " + parameter + " = true");
 			Config.getInstance().properties.setProperty(parameter, "true");
 		}
+		
+		loadProperties(false);
 	}
 
 	/**
