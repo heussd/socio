@@ -14,7 +14,7 @@ public class URIFactory {
 	private static String ENCODING = "UTF-8";
 
 	public static URI getUri(String uriString) throws Exception {
-		URI uri = new URI(uriString);
+		URI uri = new URI(uriString.replaceAll(" ", "+"));
 
 		if (uri.getQuery() != null) {
 			// Make sure the query part does not contain invalid brackets
