@@ -44,8 +44,11 @@ public class Version {
 			LOGGER.error("Could not load version information", e);
 		}
 
-		if (!Config.isOffline())
+		if (!Config.isOffline()) {
 			checkForUpdates();
+		} else {
+			LOGGER.warn("Will not check for updates in OFFLINE mode!");
+		}
 	}
 
 	public String getVersion() {
@@ -57,20 +60,23 @@ public class Version {
 	}
 
 	public void checkForUpdates() {
-		Properties gitHubProperties = new Properties();
+		if (!Config.isOffline()) {
+			LOGGER.debug("Performing update check...");
+			Properties gitHubProperties = new Properties();
 
-		try {
-			gitHubProperties.load(new URL(GITHUB_VERSION_PROPERTIES).openStream());
+			try {
+				gitHubProperties.load(new URL(GITHUB_VERSION_PROPERTIES).openStream());
 
-			if (!packagedProperties.get("version").equals(gitHubProperties.get("version"))) {
-				LOGGER.warn("New version available: Version #" + gitHubProperties.get("version"));
-				LOGGER.warn("Please always use the newest stable version!");
-				updateAvailable = true;
+				if (!packagedProperties.get("version").equals(gitHubProperties.get("version"))) {
+					LOGGER.info("New version available: Version #" + gitHubProperties.get("version"));
+					updateAvailable = true;
+				} else {
+					LOGGER.debug("No update available");
+					updateAvailable = false;
+				}
+			} catch (Exception e) {
+				LOGGER.error("Could not check for updates:", e);
 			}
-		} catch (Exception e) {
-			LOGGER.error("Could not check for updates:", e);
 		}
-		LOGGER.debug("No update available");
-		updateAvailable = false;
 	}
 }

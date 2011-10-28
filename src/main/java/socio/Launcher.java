@@ -3,6 +3,7 @@ package socio;
 import org.apache.log4j.Logger;
 
 import socio.rest.RestLauncher;
+import socio.semantic.SemanticCore;
 import socio.tray.Tray;
 import socio.xmpp.XmppClient;
 
@@ -21,11 +22,7 @@ public class Launcher {
 		try {
 			Config.getInstance().parseCommandline(args);
 			Tray.getInstance();
-			if (Version.getInstance().updateAvailable()) {
-				if (!Config.isHeadless()) {
-					Tray.getInstance().notifyForUpdate();
-				}
-			}
+			Version.getInstance();
 
 			if (!Config.isHeadless())
 				new RestLauncher().bringUpRestApi(Config.getRestPort());
@@ -34,6 +31,8 @@ public class Launcher {
 				// Trigger XMPP client
 				XmppClient.getInstance().bringUpClient(Config.getUserName(), Config.getPassword());
 			}
+			
+			SemanticCore.getInstance();
 
 			logger.info("SocIO is now operational!");
 
@@ -42,6 +41,10 @@ public class Launcher {
 				logger.info("Say anything at System.in to trigger shut down.");
 				System.in.read();
 				logger.info("Received something, shutting down.");
+			} else {
+				Thread.sleep(1000);
+				if (Version.getInstance().updateAvailable())
+					Tray.getInstance().notifyForUpdate();
 			}
 
 		} catch (Exception e) {
