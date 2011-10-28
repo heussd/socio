@@ -79,8 +79,7 @@ public class SemanticCore {
 
 		logger.debug("Reading RDF store from file...");
 		if (RDF_STORAGE_FILE.exists()) {
-			this.rdfStoreLastModification = RDF_STORAGE_FILE.lastModified();
-			rdfStore.read(RDF_STORAGE_FILE.toURI().toString(), Semantics.RDF_EXPORT_FORMAT);
+			readStore();
 		} else {
 			try {
 				FileUtils.touch(RDF_STORAGE_FILE);
@@ -109,15 +108,18 @@ public class SemanticCore {
 		persistStore();
 	}
 
+	private void readStore() {
+		logger.debug("Reading RDF store from file...");
+		this.rdfStoreLastModification = RDF_STORAGE_FILE.lastModified();
+		rdfStore.read(RDF_STORAGE_FILE.toURI().toString(), Semantics.RDF_EXPORT_FORMAT);
+	}
+
 	private void persistStore() {
 		if (storeNeedsWrite) {
-			// Check if there happend a silent update
+			// Check if there happened a silent update
 			if (RDF_STORAGE_FILE.lastModified() != rdfStoreLastModification) {
 				logger.debug("There happend a silent update on the store.");
-
-				logger.debug("Reading RDF store from file...");
-				this.rdfStoreLastModification = RDF_STORAGE_FILE.lastModified();
-				rdfStore.read(RDF_STORAGE_FILE.toURI().toString(), Semantics.RDF_EXPORT_FORMAT);
+				readStore();
 			}
 
 			if (!Config.isReadonly()) {
