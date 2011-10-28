@@ -20,6 +20,7 @@ public class Launcher {
 		logger.info("T.H. SocIO Semantic Resource Manager");
 		try {
 			Config.getInstance().parseCommandline(args);
+			Tray.getInstance();
 
 			if (!Config.isHeadless())
 				new RestLauncher().bringUpRestApi(Config.getRestPort());
@@ -42,8 +43,6 @@ public class Launcher {
 				logger.info("Say anything at System.in to trigger shut down.");
 				System.in.read();
 				logger.info("Received something, shutting down.");
-			} else {
-				Tray.getInstance();
 			}
 
 		} catch (Exception e) {
