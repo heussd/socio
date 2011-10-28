@@ -1,7 +1,6 @@
 package socio.semantic;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 
 import java.io.File;
 import java.net.URI;
@@ -47,11 +46,12 @@ public class SemanticCoreTest {
 
 		core.clear();
 
-		assertFalse("none".equals(core.classifyKnowledgeAbout(knownSubject)));
+		// Not yet tested!
+//		assertFalse("none".equals(core.classifyKnowledgeAbout(knownSubject)));
 
 		core.dumpStore();
-
-		System.exit(0);
+		
+//		System.exit(0);
 	}
 
 	@Test

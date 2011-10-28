@@ -14,7 +14,6 @@ import java.awt.event.ActionListener;
 import org.apache.log4j.Logger;
 
 import socio.Config;
-import socio.UpdateChecker;
 
 /**
  * http://java.sun.com/developer/technicalArticles/J2SE/Desktop/javase6/
