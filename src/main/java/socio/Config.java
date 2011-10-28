@@ -122,7 +122,7 @@ public class Config {
 			LOGGER.info("Manual override: " + parameter + " = true");
 			Config.getInstance().properties.setProperty(parameter, "true");
 		}
-		
+
 		loadProperties(false);
 	}
 
@@ -243,6 +243,10 @@ public class Config {
 
 	public static int getRestPort() {
 		return getIntegerProperty("rest.port");
+	}
+
+	public static String getGitBranch() {
+		return getStringProperty("git.branch");
 	}
 
 }

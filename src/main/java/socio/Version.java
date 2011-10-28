@@ -16,7 +16,7 @@ import org.apache.log4j.Logger;
 public class Version {
 
 	private static final Logger LOGGER = Logger.getLogger(Version.class);
-	private static final String GITHUB_VERSION_PROPERTIES = "https://raw.github.com/heussd/socio/master/src/main/resources/version.properties";
+	private static final String GITHUB_VERSION_PROPERTIES = "https://raw.github.com/heussd/socio/" + Config.getGitBranch() + "/src/main/resources/version.properties";
 
 	private boolean updateAvailable;
 	private String version;
