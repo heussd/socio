@@ -19,7 +19,7 @@ public class Version {
 	private static final String GITHUB_VERSION_PROPERTIES = "https://raw.github.com/heussd/socio/" + Config.getGitBranch() + "/src/main/resources/version.properties";
 
 	private boolean updateAvailable;
-	private String version;
+	private Properties packagedProperties;
 
 	/**
 	 * Implementation of a thread safe, synchronized singleton pattern
@@ -35,7 +35,21 @@ public class Version {
 	}
 
 	private Version() {
-		checkForUpdates();
+		packagedProperties = new Properties();
+		try {
+			packagedProperties.load(Version.class.getClassLoader().getResourceAsStream("version.properties"));
+			LOGGER.info("This is version #" + getVersion());
+
+		} catch (Exception e) {
+			LOGGER.error("Could not load version information", e);
+		}
+
+		if (!Config.isOffline())
+			checkForUpdates();
+	}
+
+	public String getVersion() {
+		return packagedProperties.getProperty("version");
 	}
 
 	public boolean updateAvailable() {
@@ -43,15 +57,10 @@ public class Version {
 	}
 
 	public void checkForUpdates() {
-		Properties packagedProperties = new Properties();
 		Properties gitHubProperties = new Properties();
-		
-		try {
-			packagedProperties.load(Version.class.getClassLoader().getResourceAsStream("version.properties"));
-			gitHubProperties.load(new URL(GITHUB_VERSION_PROPERTIES).openStream());
 
-			version = packagedProperties.getProperty("version");
-			LOGGER.info("This is version #" + version);
+		try {
+			gitHubProperties.load(new URL(GITHUB_VERSION_PROPERTIES).openStream());
 
 			if (!packagedProperties.get("version").equals(gitHubProperties.get("version"))) {
 				LOGGER.warn("New version available: Version #" + gitHubProperties.get("version"));
