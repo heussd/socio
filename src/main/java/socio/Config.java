@@ -75,6 +75,11 @@ public class Config {
 		} catch (Exception e) {
 			LOGGER.error("Could not load properties file", e);
 		}
+
+		if (properties.getProperty("useproxy").equals("true")) {
+			System.setProperty("proxyPort", properties.getProperty("proxy.port"));
+			System.setProperty("proxyHost", properties.getProperty("proxy.address"));
+		}
 	}
 
 	private void setupWizard() {

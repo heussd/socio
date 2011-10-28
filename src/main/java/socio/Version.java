@@ -45,13 +45,7 @@ public class Version {
 	public void checkForUpdates() {
 		Properties packagedProperties = new Properties();
 		Properties gitHubProperties = new Properties();
-
-		// Move this in the central config class
-		if (Config.useProxy()) {
-			System.setProperty("proxyPort", "" + Config.getProxyPort());
-			System.setProperty("proxyHost", Config.getProxyAddress());
-		}
-
+		
 		try {
 			packagedProperties.load(Version.class.getClassLoader().getResourceAsStream("version.properties"));
 			gitHubProperties.load(new URL(GITHUB_VERSION_PROPERTIES).openStream());
