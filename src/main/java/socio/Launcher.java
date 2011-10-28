@@ -21,6 +21,11 @@ public class Launcher {
 		try {
 			Config.getInstance().parseCommandline(args);
 			Tray.getInstance();
+			if (Version.getInstance().updateAvailable()) {
+				if (!Config.isHeadless()) {
+					Tray.getInstance().notifyForUpdate();
+				}
+			}
 
 			if (!Config.isHeadless())
 				new RestLauncher().bringUpRestApi(Config.getRestPort());
@@ -31,12 +36,6 @@ public class Launcher {
 			}
 
 			logger.info("SocIO is now operational!");
-
-			if (UpdateChecker.updateAvailable()) {
-				if (!Config.isHeadless()) {
-					Tray.getInstance().notifyForUpdate();
-				}
-			}
 
 			if (Config.isHeadless()) {
 				// Prevent shutdown by waiting for any Console.in
