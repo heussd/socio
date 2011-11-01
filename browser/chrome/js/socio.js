@@ -6,6 +6,15 @@ function addNewTag($tag) {
   $.ajax({ url: "http://localhost:8080/socio/rest/addTag?uri=" + escape($currentUrl) + "&tag='" + $tag + "'"})
 }
 
+function shortenUrl($string) {
+  $string = $string.replace("http://", "");
+  $string = $string.replace("https://", "");
+  if($string.length > 33) {
+    return $string.substring(0,32)+"...";
+  }
+  return $string;
+}
+
 
 function displayUrl() {
     $('#currentUrl').text($currentUrl);
@@ -78,7 +87,7 @@ function buildRelatedList() {
 	  var items = [];
 	  
 	  $.each(data, function(key, val) {
-	    items.push('<li id="' + key + '"><span class="hiddenvalue">' + val + '</span><a href="' + key + '" class="relatedurl" onclick="openUrl(\'' + key + '\'); window.close();">' + key + '</a> <div class="progress"><div style="width:' + ( val  * 100 ) + '%; ">&nbsp;</div></div></li>');
+	    items.push('<li id="' + key + '"><span class="hiddenvalue">' + val + '</span><a href="' + key + '" alt="' + key + '" class="relatedurl" onclick="openUrl(\'' + key + '\'); window.close();">' + shortenUrl(key) + '</a> <div class="progress"><div style="width:' + ( val  * 100 ) + '%; ">&nbsp;</div></div></li>');
 	  });
 	  
 	  

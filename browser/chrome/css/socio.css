@@ -48,11 +48,11 @@ li.allmytags {
 
 
 ol.related {
-	list-style-type: decimal;
+	list-style-type: none;
 	width:100%;
 }
 ol.related li {
-	margin:10px 0 0 30px;
+	margin:10px 0 0 10px;
 	line-height:10px;
 }
 ol.related li a {
@@ -125,6 +125,8 @@ button {
 .hiddenvalue {
 	display:none;
 }
+
+
 
 
 
