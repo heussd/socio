@@ -56,7 +56,7 @@ public class SemanticCore {
 	private static File RDF_STORAGE_FILE;
 	private boolean storeNeedsWrite = false;
 
-//	private Long rdfStoreLastModification;
+	// private Long rdfStoreLastModification;
 
 	/**
 	 * Jena specific settings
@@ -110,17 +110,18 @@ public class SemanticCore {
 
 	private void readStore() {
 		logger.debug("Reading RDF store from file...");
-//		this.rdfStoreLastModification = RDF_STORAGE_FILE.lastModified();
+		// this.rdfStoreLastModification = RDF_STORAGE_FILE.lastModified();
 		rdfStore.read(RDF_STORAGE_FILE.toURI().toString(), Semantics.RDF_EXPORT_FORMAT);
 	}
 
 	private void persistStore() {
 		if (storeNeedsWrite) {
 			// Check if there happened a silent update
-//			if (RDF_STORAGE_FILE.lastModified() != rdfStoreLastModification) {
-//				logger.debug("There happend a silent update on the store.");
-//				readStore();
-//			}
+			// if (RDF_STORAGE_FILE.lastModified() != rdfStoreLastModification)
+			// {
+			// logger.debug("There happend a silent update on the store.");
+			// readStore();
+			// }
 
 			if (!Config.isReadonly()) {
 				try {
@@ -611,6 +612,40 @@ public class SemanticCore {
 				String tag = rb.get("tagname").toString();
 
 				ActivityEntry activityEntry = new ActivityEntry(resource, date, tag);
+				activityEntries.add(activityEntry);
+			}
+		} catch (Exception e) {
+			logger.error("Error while executing query:", e);
+		} finally {
+			if (qexec != null)
+				qexec.close();
+		}
+		return activityEntries;
+	}
+
+	public List<ActivityEntry> queryCommunityActivity() {
+		return queryCommunityActivity(Config.getXmppUserId());
+	}
+
+	public List<ActivityEntry> queryCommunityActivity(String xmppUserId) {
+		List<ActivityEntry> activityEntries = new ArrayList<ActivityEntry>();
+		Query query = semantics.buildCommunityActivityQuery(xmppUserId);
+
+		QueryExecution qexec = null;
+		try {
+			qexec = QueryExecutionFactory.create(query, rdfStore);
+			ResultSet results = qexec.execSelect();
+
+			for (; results.hasNext();) {
+				QuerySolution rb = results.nextSolution();
+
+				logger.debug("Query result: " + rb);
+				String resource = rb.get("url").toString();
+				String date = rb.get("date").toString();
+				String tag = rb.get("tagname").toString();
+				String user = rb.get("user").toString();
+
+				ActivityEntry activityEntry = new ActivityEntry(resource, date, user, tag);
 				activityEntries.add(activityEntry);
 			}
 		} catch (Exception e) {

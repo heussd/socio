@@ -115,6 +115,12 @@ public class RestApi implements SocIoRestApi {
 		// Remove tag delimiters (if necessary)
 		tag = tag.replaceAll("'", "").replace("\"", "");
 
+		if ("".equals(tag) && "".equals(user)) {
+			ActivityFeed activityFeed = new ActivityFeed();
+			activityFeed.addEntries(SemanticCore.getInstance().queryCommunityActivity());
+			return CorsResponse.ok(activityFeed.toString());
+		}
+
 		if (!"".equals(tag)) {
 			ActivityFeed activityFeed = new ActivityFeed(tag);
 			activityFeed.addEntries(SemanticCore.getInstance().queryTagActivity(tag));

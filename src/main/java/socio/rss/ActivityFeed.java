@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import socio.Config;
+
 import com.sun.syndication.feed.synd.SyndContent;
 import com.sun.syndication.feed.synd.SyndContentImpl;
 import com.sun.syndication.feed.synd.SyndEntry;
@@ -46,6 +48,16 @@ public class ActivityFeed {
 		syndEntries = new ArrayList<SyndEntry>();
 	}
 
+	public ActivityFeed() {
+		syndFeed = new SyndFeedImpl();
+		syndFeed.setFeedType(FEED_TYPE);
+		syndFeed.setTitle(Config.getXmppUserId() + "'s Community Activity");
+		syndFeed.setLink(LINK);
+		syndFeed.setDescription("Community activity feed of " + Config.getXmppUserId());
+
+		syndEntries = new ArrayList<SyndEntry>();
+	}
+
 	public void addEntry(ActivityEntry activityEntry) {
 		SyndEntry entry = new SyndEntryImpl();
 
@@ -57,7 +69,7 @@ public class ActivityFeed {
 			SyndContent description = new SyndContentImpl();
 			description = new SyndContentImpl();
 			description.setType("text/plain");
-			description.setValue("Tagged by " + activityEntry.getUser());
+			description.setValue(activityEntry.toString());
 			entry.setDescription(description);
 		}
 

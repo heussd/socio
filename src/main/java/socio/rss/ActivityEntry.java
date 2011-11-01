@@ -14,11 +14,27 @@ public class ActivityEntry {
 	private String resource;
 	private Date date;
 	private String user;
+	private String tag;
 
 	public ActivityEntry(String resource, String date, String user) {
 		setResource(resource);
 		setDate(date);
 		setUser(user);
+	}
+
+	public ActivityEntry(String resource, String date, String user, String tag) {
+		setResource(resource);
+		setDate(date);
+		setUser(user);
+		setTag(tag);
+	}
+
+	public String getTag() {
+		return tag;
+	}
+
+	public void setTag(String tag) {
+		this.tag = tag;
 	}
 
 	public String getResource() {
@@ -48,5 +64,11 @@ public class ActivityEntry {
 
 	public void setUser(String user) {
 		this.user = user;
+	}
+
+	public String toString() {
+		return (getUser() != null ? "User " + getUser() + " tagged " : "Tagging for ") + (getResource() != null ? " resource " + getResource() + " " : " ")
+				+ (getTag() != null ? " with tag \"" + getTag() + "\"" : "");
+
 	}
 }

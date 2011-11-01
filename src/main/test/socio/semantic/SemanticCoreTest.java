@@ -33,24 +33,39 @@ public class SemanticCoreTest {
 		core.persistStatements(semantics.constructDemoMessageModel(), true);
 	}
 
-//	@Test
-//	public void testLastMod() throws Exception {
-//		core = SemanticCore.getInstance();
-//		core.clear();
-//
-//		core.persistStatements(semantics.constructDemoMessageModel());
-//
-//		FileUtils.touch(new File(Config.getRdfStoreFile()));
-//
-//		core.clear();
-//
-//		// Not yet tested!
-////		assertFalse("none".equals(core.classifyKnowledgeAbout(knownSubject)));
-//
-//		core.dumpStore();
-//		
-////		System.exit(0);
-//	}
+	// @Test
+	// public void testLastMod() throws Exception {
+	// core = SemanticCore.getInstance();
+	// core.clear();
+	//
+	// core.persistStatements(semantics.constructDemoMessageModel());
+	//
+	// FileUtils.touch(new File(Config.getRdfStoreFile()));
+	//
+	// core.clear();
+	//
+	// // Not yet tested!
+	// // assertFalse("none".equals(core.classifyKnowledgeAbout(knownSubject)));
+	//
+	// core.dumpStore();
+	//
+	// // System.exit(0);
+	// }
+
+	@Test
+	public void testActivity() throws Exception {
+		core.clear();
+		core.persistStatements(semantics.constructDemoMessageModel(), true);
+
+		List<ActivityEntry> activityEntries = core.queryCommunityActivity();
+
+		assertEquals(0, activityEntries.size());
+
+		activityEntries = core.queryCommunityActivity("ANUNKNOWNUSER");
+
+		assertEquals(4, activityEntries.size());
+
+	}
 
 	@Test
 	public void testStrangeUris() throws Exception {

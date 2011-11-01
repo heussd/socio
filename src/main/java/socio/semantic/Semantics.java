@@ -390,4 +390,13 @@ public class Semantics {
 		logger.debug("Query is " + queryString);
 		return QueryFactory.parse(query, queryString, null, Syntax.syntaxSPARQL);
 	}
+
+	public Query buildCommunityActivityQuery(String user) {
+		Query query = QueryFactory.make();
+		query.setPrefixMapping(prefixMapping);
+
+		String queryString = queries.getProperty("query.activity").replaceAll("###user###", user);
+		logger.debug("Query is " + queryString);
+		return QueryFactory.parse(query, queryString, null, Syntax.syntaxSPARQL);
+	}
 }
