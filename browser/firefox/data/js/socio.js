@@ -237,7 +237,7 @@ function buildRelatedList() {
 	  var items = [];
 	  
 	  $.each(data, function(key, val) {
-	    items.push('<li id="' + key + '"><span class="hiddenvalue">' + val + '</span><a class="relatedurl">' + key + '</a> <div class="progress"><div style="width:' + ( val  * 100 ) + '%; ">&nbsp;</div></div></li>');
+	    items.push('<li id="' + key + '"><span class="hiddenvalue">' + val + '</span><a title="' + key + '" class="relatedurl">' + shortenUrl(key) + '</a> <div class="progress"><div style="width:' + ( val  * 100 ) + '%; ">&nbsp;</div></div></li>');
     });
 	  
 	  
@@ -344,3 +344,11 @@ console.log("updateAdressbarIcon(): " + url);
    });
 }
 
+function shortenUrl($string) {
+  $string = $string.replace("http://", "");
+  $string = $string.replace("https://", "");
+  if($string.length > 33) {
+    return $string.substring(0,32)+"...";
+  }
+  return $string;
+}

@@ -48,11 +48,11 @@ li.allmytags {
 
 
 ol.related {
-	list-style-type: decimal;
+	list-style-type: none;
 	width:100%;
 }
 ol.related li {
-	margin:10px 0 0 30px;
+	margin:10px 0 0 10px;
 	line-height:10px;
 }
 ol.related li a {
@@ -60,9 +60,11 @@ ol.related li a {
 	color:black;
 	font-weight:normal;
 	color:gray;
+	cursor:pointer;
 }
 ol.related li a:hover {
 	color:black;
+	cursor:pointer;
 }
 
 
@@ -75,7 +77,7 @@ ol.related li a:hover {
 
 .halfpanel form input {
   width: 80%;
-}
+}           
 
 
 input.add {
