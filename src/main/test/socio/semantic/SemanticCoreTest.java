@@ -2,12 +2,10 @@ package socio.semantic;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -35,24 +33,24 @@ public class SemanticCoreTest {
 		core.persistStatements(semantics.constructDemoMessageModel(), true);
 	}
 
-	@Test
-	public void testLastMod() throws Exception {
-		core = SemanticCore.getInstance();
-		core.clear();
-
-		core.persistStatements(semantics.constructDemoMessageModel());
-
-		FileUtils.touch(new File(Config.getRdfStoreFile()));
-
-		core.clear();
-
-		// Not yet tested!
-//		assertFalse("none".equals(core.classifyKnowledgeAbout(knownSubject)));
-
-		core.dumpStore();
-		
-//		System.exit(0);
-	}
+//	@Test
+//	public void testLastMod() throws Exception {
+//		core = SemanticCore.getInstance();
+//		core.clear();
+//
+//		core.persistStatements(semantics.constructDemoMessageModel());
+//
+//		FileUtils.touch(new File(Config.getRdfStoreFile()));
+//
+//		core.clear();
+//
+//		// Not yet tested!
+////		assertFalse("none".equals(core.classifyKnowledgeAbout(knownSubject)));
+//
+//		core.dumpStore();
+//		
+////		System.exit(0);
+//	}
 
 	@Test
 	public void testStrangeUris() throws Exception {
