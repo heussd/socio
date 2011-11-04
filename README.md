@@ -2,8 +2,6 @@ SocIO
 =====
 
 * Author:    Timm Heuss (Timm.Heuss AT web.de)
-* Date:      September, 2011
-* Last mod.: September, 2011
 * Website:   <http://users.fbihome.de/~Heuss/srp/>
 * GitHub:    <https://github.com/Heussd/socio/>
 
@@ -19,7 +17,7 @@ SocIO allows you to...
 * connect and exchange taggings with other Jabber-IDs (try <socio@jabber.ccc.de>).
 * confirm tags that others gave to webpages.
 * display related webpages, based on the tags assigned to the current page.
-* follow tags via RSS.
+* follow [tags](http://localhost:8080/socio/rest/activity?tag=University), [users](http://localhost:8080/socio/rest/activity?user=socio@jabber.ccc.de) or your [entire peer activity](http://localhost:8080/socio/rest/activity) via RSS.
 
 
 Requirements
