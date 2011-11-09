@@ -556,11 +556,18 @@ public class SemanticCore {
 		}
 
 		// 3. Make scores relative
+		Float threshold = Config.getRelatedThreshold().floatValue() / 100;
 		Iterator<Entry<String, Float>> iterator = result.entrySet().iterator();
 		while (iterator.hasNext()) {
 			Entry<String, Float> entry = iterator.next();
 
-			result.put(entry.getKey(), (entry.getValue() / numberOfTags));
+			Float rating = entry.getValue() / numberOfTags;
+
+			if (rating < threshold) {
+				iterator.remove();
+			} else {
+				result.put(entry.getKey(), rating);
+			}
 		}
 		return result;
 	}

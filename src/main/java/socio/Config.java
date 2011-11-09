@@ -253,5 +253,9 @@ public class Config {
 	public static String getGitBranch() {
 		return getStringProperty("git.branch");
 	}
+	
+	public static Integer getRelatedThreshold() {
+		return getIntegerProperty("related.threshold");
+	}
 
 }
