@@ -663,4 +663,28 @@ public class SemanticCore {
 		}
 		return activityEntries;
 	}
+
+	public Suggestions search(String input) {
+		Suggestions suggestions = new Suggestions(input);
+
+		Query query = semantics.buildSearchQuery(input);
+		logger.debug("Constructed query is " + query);
+
+		QueryExecution qexec = null;
+		try {
+			qexec = QueryExecutionFactory.create(query, rdfStore);
+			ResultSet results = qexec.execSelect();
+
+			for (; results.hasNext();) {
+				QuerySolution rb = results.nextSolution();
+				suggestions.put(rb.get("url").toString(), (rb.get("label") != null ? rb.get("label").toString() : ""), rb.get("score").toString());
+			}
+		} catch (Exception e) {
+			logger.error("Error while executing query:", e);
+		} finally {
+			if (qexec != null)
+				qexec.close();
+		}
+		return suggestions;
+	}
 }

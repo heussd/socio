@@ -399,4 +399,21 @@ public class Semantics {
 		logger.debug("Query is " + queryString);
 		return QueryFactory.parse(query, queryString, null, Syntax.syntaxSPARQL);
 	}
+
+	public Query buildSearchQuery(String input) {
+		Query query = QueryFactory.make();
+		query.setPrefixMapping(prefixMapping);
+
+		String where = "";
+		for (String word : input.split(" ")) {
+			if (!where.equals(""))
+				where += "\n UNION \n";
+			where += queries.getProperty("suggestion.query.where").replaceAll("###input###", word);
+		}
+
+		String queryString = queries.getProperty("suggestion.query").replaceAll("###items###", input.split(" ").length + "").replaceAll("###where###", where);
+		logger.debug("Query is " + queryString);
+		return QueryFactory.parse(query, queryString, null, Syntax.syntaxARQ);
+	}
+
 }

@@ -53,6 +53,26 @@ public class SemanticCoreTest {
 	// }
 
 	@Test
+	public void testSearch() throws Exception {
+		core.clear();
+		core.persistStatements(semantics.constructDemoMessageModel(), true);
+
+		assertEquals(1, core.search("h-da.").size());
+		assertEquals(1, core.search("bob-socio").size());
+		assertEquals(0, core.search("asdfgjklöäqwertzuiopüyxcvbnmalöqwezuiopü").size());
+
+		core.persistStatements(semantics.makeTagging("xmpp://anotheruser@example.com", new URI("http://www.google.de"), "Search", "Cool", "Computer"), false);
+		
+		assertEquals(2, core.search("Computer").size());
+		assertEquals(1, core.search("Search").size());
+		assertEquals(2, core.search("http").size());
+		
+		assertEquals(1, core.search("Computer Dep").size());
+		assertEquals(1, core.search("Comp earc").size());
+		assertEquals(2, core.search("http comp de").size());
+	}
+
+	@Test
 	public void testActivity() throws Exception {
 		core.clear();
 		core.persistStatements(semantics.constructDemoMessageModel(), true);
