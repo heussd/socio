@@ -59,7 +59,7 @@ public class SemanticCoreTest {
 
 		assertEquals(1, core.search("h-da.").size());
 		// assertEquals(1, core.search("bob-socio").size());
-		assertEquals(0, core.search("asdfgjklöäqwertzuiopüyxcvbnmalöqwezuiopü").size());
+		assertEquals(0, core.search("asdfgjklqwertzuiopyxcvbnmalqwezuiop").size());
 
 		core.persistStatements(semantics.makeTagging(Config.getXmppUserId(), new URI("http://www.google.de"), "Search", "Cool", "Computer"), false);
 
