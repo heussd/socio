@@ -12,7 +12,6 @@ import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.RosterListener;
 import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Message.Body;
@@ -174,15 +173,15 @@ public class XmppClient {
 			return false;
 		}
 
-		RosterEntry existingRosterEntry = connection.getRoster().getEntry(jabberId.replaceAll("xmpp://", ""));
-		if (existingRosterEntry != null) {
-			logger.debug("User already exists on the roster, trying to delete him first...");
-			try {
-				connection.getRoster().removeEntry(existingRosterEntry);
-			} catch (XMPPException e) {
-				logger.warn("Could not delete roster entry \"" + jabberId + "\"", e);
-			}
-		}
+//		RosterEntry existingRosterEntry = connection.getRoster().getEntry(jabberId.replaceAll("xmpp://", ""));
+//		if (existingRosterEntry != null) {
+//			logger.debug("User already exists on the roster, trying to delete him first...");
+//			try {
+//				connection.getRoster().removeEntry(existingRosterEntry);
+//			} catch (XMPPException e) {
+//				logger.warn("Could not delete roster entry \"" + jabberId + "\"", e);
+//			}
+//		}
 
 		logger.debug("Adding new user " + jabberId + " ...");
 		try {
