@@ -1,7 +1,7 @@
 {
-  "name": "T.H. SocIO Chrome Extension",
+  "name": "SocIO",
   "version": "1.0",
-  "description": "Browser interface for the SocIO RESTful API.",
+  "description": "Browser interface for SocIO.",
   "icons": {"16": "images/add.png",
             "48": "images/add.png",
            "128": "images/add.png" },
@@ -10,6 +10,7 @@
     "default_title": "SocIO Tags",
     "default_popup": "index.html"
   },
+  "omnibox": { "keyword" : "s" },
   "permissions": [
     "http://*/*",
     "tabs"

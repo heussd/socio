@@ -408,7 +408,8 @@ public class Semantics {
 		for (String word : input.split(" ")) {
 			if (!where.equals(""))
 				where += "\n UNION \n";
-			where += queries.getProperty("suggestion.query.where").replaceAll("###input###", word);
+
+			where += queries.getProperty("suggestion.query.where").replaceAll("###input###", word).replaceAll("###user###", Config.getXmppUserId());
 		}
 
 		String queryString = queries.getProperty("suggestion.query").replaceAll("###items###", input.split(" ").length + "").replaceAll("###where###", where);

@@ -677,6 +677,7 @@ public class SemanticCore {
 
 			for (; results.hasNext();) {
 				QuerySolution rb = results.nextSolution();
+				logger.debug("Result: " + rb.toString());
 				suggestions.put(rb.get("url").toString(), (rb.get("label") != null ? rb.get("label").toString() : ""), rb.get("score").toString());
 			}
 		} catch (Exception e) {

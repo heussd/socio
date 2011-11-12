@@ -81,6 +81,15 @@ function openUrl(url) {
 	}	
 }
 
+function getSuggestions(input) {
+  $.ajax({
+      url:"http://localhost:8080/socio/rest/search?q=" + escape(input),
+      success: function(data, status) {
+        return data;
+      }
+  });
+}
+
 function buildRelatedList() {
 	$.getJSON('http://localhost:8080/socio/rest/queryRelated?uri=' + escape($currentUrl), function(data) {
 	  

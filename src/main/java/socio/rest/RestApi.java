@@ -13,6 +13,7 @@ import org.json.JSONObject;
 
 import socio.rss.ActivityFeed;
 import socio.semantic.SemanticCore;
+import socio.semantic.Suggestions;
 import socio.xmpp.XmppClient;
 
 public class RestApi implements SocIoRestApi {
@@ -133,5 +134,19 @@ public class RestApi implements SocIoRestApi {
 		}
 
 		return CorsResponse.badRequest();
+	}
+
+	@Override
+	public Response search(String q) {
+		logger.info("Sugg: " + q);
+		q = q.replaceAll("'", "").replaceAll("\"", "");
+		if (q.equals("")) {
+			logger.info("RET");
+			return CorsResponse.ok("[]");
+		}
+
+		Suggestions suggestions = SemanticCore.getInstance().search(q);
+		logger.info("Found: " + suggestions.toJson());
+		return CorsResponse.ok(suggestions.toJson());
 	}
 }

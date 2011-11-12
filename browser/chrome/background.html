@@ -20,6 +20,26 @@
             });
           });
 
+          chrome.omnibox.onInputChanged.addListener(function(text, suggest) {
+            $.ajax({
+                url:"http://localhost:8080/socio/rest/search?q=" + escape(text),
+                success: function(data, status) {
+                  suggest(eval(data));
+                }
+            });
+          });
+
+          chrome.omnibox.setDefaultSuggestion({
+            description: 'SocIO Store Search'
+          });
+          
+          chrome.omnibox.onInputEntered.addListener(function(text) {
+            chrome.tabs.getSelected(null, function(tab) {
+              chrome.tabs.update(tab.id, {url: text});
+            });
+          });
+
+
         } catch(err) {
           // Fallback option, hardcode your URL here
           updateAddressbarIcon("https://www.fbi.h-da.de/", 0);
