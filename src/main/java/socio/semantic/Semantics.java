@@ -377,7 +377,7 @@ public class Semantics {
 		Query query = QueryFactory.make();
 		query.setPrefixMapping(prefixMapping);
 
-		String queryString = queries.getProperty("query.tagactivity").replaceAll("###tag###", tagName);
+		String queryString = queries.getProperty("query.tagactivity").replaceAll("###tag###", tagName).replaceAll("###user###", Config.getXmppUserId());
 		logger.debug("Query is " + queryString);
 		return QueryFactory.parse(query, queryString, null, Syntax.syntaxSPARQL);
 	}

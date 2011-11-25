@@ -146,13 +146,12 @@ public class SemanticCoreTest {
 
 		List<ActivityEntry> activityEntries = core.queryTagActivity(tag);
 
-		assertEquals(1, activityEntries.size());
-		assertEquals(knownSubject.toString(), activityEntries.get(0).getResource());
+		assertEquals(0, activityEntries.size());
 
 		SemanticCore.getInstance().persistStatements(semantics.makeTagging("xmpp://anotheruser@example.com", knownSubject, tag), true);
 		activityEntries = core.queryTagActivity(tag);
 
-		assertEquals(2, activityEntries.size());
+		assertEquals(1, activityEntries.size());
 
 		ActivityFeed activityFeed = new ActivityFeed(tag);
 		activityFeed.addEntries(activityEntries);
