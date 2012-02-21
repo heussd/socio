@@ -2,7 +2,7 @@ SocIO
 =====
 
 * Author:    Timm Heuss (Timm.Heuss AT web.de)
-* Website:   <http://users.fbihome.de/~Heuss/srp/>
+* Website:   <http://heussd.github.com/socio/>
 * GitHub:    <https://github.com/Heussd/socio/>
 
 
