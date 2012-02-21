@@ -1,0 +1,12 @@
+@import url("styles.css") all;
+
+a {
+  color:black;
+}
+.noprint {
+  display: none;
+}
+
+.printme {
+  display:inline !important;
+}
