@@ -47,30 +47,9 @@ public class Tray {
 			Image image = Toolkit.getDefaultToolkit().getImage(Tray.class.getClassLoader().getResource("socio_icon.png"));
 			PopupMenu popup = new PopupMenu();
 
-			MenuItem browseMenuItem = new MenuItem("Browse commits on GitHub...");
-			browseMenuItem.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent actionEvent) {
-					if (java.awt.Desktop.isDesktopSupported()) {
-						java.awt.Desktop desktop = java.awt.Desktop.getDesktop();
-
-						if (desktop.isSupported(java.awt.Desktop.Action.BROWSE)) {
-							try {
-								java.net.URI uri = new java.net.URI("https://github.com/heussd/socio/commits/master");
-								desktop.browse(uri);
-							} catch (Exception e) {
-								LOGGER.error("Could not browse resource", e);
-							}
-						} else {
-							LOGGER.error("Action BROWSE not supported.");
-						}
-					} else {
-						LOGGER.error("Desktop is not supported (fatal)");
-					}
-
-				}
-			});
-
+			addBrowseMenuItem(popup, "Community activity feed...", "http://localhost:" + Config.getRestPort() + "/socio/rest/activity");
+			addBrowseMenuItem(popup, "Browse commits on GitHub...", "https://github.com/heussd/socio/commits/master");
+			
 			MenuItem exitMenuItem = new MenuItem("Exit");
 			exitMenuItem.addActionListener(new ActionListener() {
 				@Override
@@ -79,7 +58,6 @@ public class Tray {
 				}
 			});
 
-			popup.add(browseMenuItem);
 			popup.add(exitMenuItem);
 
 			trayIcon = new TrayIcon(image, "SocIO Tray Icon", popup);
@@ -95,6 +73,12 @@ public class Tray {
 		} else {
 			LOGGER.warn("Tray is disabled.");
 		}
+	}
+
+	private void addBrowseMenuItem(PopupMenu popup, String title, String uriString) {
+		MenuItem browseMenuItem = new MenuItem(title);
+		browseMenuItem.addActionListener(new UriBrowserActionListener(uriString));
+		popup.add(browseMenuItem);
 	}
 
 	public void notifyForUpdate() {
