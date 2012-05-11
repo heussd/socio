@@ -2,6 +2,7 @@ package socio;
 
 import org.apache.log4j.Logger;
 
+import socio.observer.PocketComPublisher;
 import socio.rest.RestLauncher;
 import socio.semantic.SemanticCore;
 import socio.tray.Tray;
@@ -31,8 +32,15 @@ public class Launcher {
 				// Trigger XMPP client
 				XmppClient.getInstance().bringUpClient(Config.getUserName(), Config.getPassword());
 			}
-			
+
 			SemanticCore.getInstance();
+
+			logger.info("Registering observers...");
+			try {
+				SemanticCore.getInstance().addObserver(new PocketComPublisher());
+			} catch (Exception e) {
+				logger.error("Could not start observer", e);
+			}
 
 			logger.info("SocIO is now operational!");
 

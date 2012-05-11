@@ -253,9 +253,21 @@ public class Config {
 	public static String getGitBranch() {
 		return getStringProperty("git.branch");
 	}
-	
+
 	public static Integer getRelatedThreshold() {
 		return getIntegerProperty("related.threshold");
+	}
+
+	public static String getPocketUsername() {
+		return getStringProperty("pocket.user");
+	}
+
+	public static String getPocketPassword() {
+		return getStringProperty("pocket.pass");
+	}
+
+	public static String getPocketApiKey() {
+		return getStringProperty("pocket.apikey");
 	}
 
 }

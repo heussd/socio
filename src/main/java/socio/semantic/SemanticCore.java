@@ -223,7 +223,7 @@ public class SemanticCore extends Observable {
 				logger.debug("Newly imported model will not be broadcasted!");
 			}
 
-			notifyObservers(model);
+			notifyObservers(semantics.extractActivityEntries(model));
 		} else {
 			logger.debug("Model was empty, nothing to persist.");
 		}
