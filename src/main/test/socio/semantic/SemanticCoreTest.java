@@ -10,8 +10,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import socio.Config;
+import socio.model.Promotion;
 import socio.rest.URIFactory;
-import socio.rss.ActivityEntry;
 import socio.rss.ActivityFeed;
 
 import com.hp.hpl.jena.rdf.model.Model;
@@ -68,8 +68,8 @@ public class SemanticCoreTest {
 		assertEquals(2, core.search("http").size());
 
 		System.out.println(core.search("Computer Dep").toJson());
-//		assertEquals(1, core.search("Computer Dep").size());
-//		assertEquals(1, core.search("Comp earc").size());
+		// assertEquals(1, core.search("Computer Dep").size());
+		// assertEquals(1, core.search("Comp earc").size());
 		assertEquals(2, core.search("http comp de").size());
 
 	}
@@ -79,13 +79,13 @@ public class SemanticCoreTest {
 		core.clear();
 		core.persistStatements(semantics.constructDemoMessageModel(), true);
 
-		List<ActivityEntry> activityEntries = core.queryCommunityActivity();
+		List<Promotion> promotions = core.queryCommunityActivity();
 
-		assertEquals(0, activityEntries.size());
+		assertEquals(0, promotions.size());
 
-		activityEntries = core.queryCommunityActivity("ANUNKNOWNUSER");
+		promotions = core.queryCommunityActivity("ANUNKNOWNUSER");
 
-		assertEquals(4, activityEntries.size());
+		assertEquals(4, promotions.size());
 
 	}
 
@@ -112,24 +112,24 @@ public class SemanticCoreTest {
 		core.dumpStore();
 		core.persistStatements(semantics.constructDemoMessageModel(), true);
 
-		List<ActivityEntry> activityEntries = core.queryUserActivity(user);
+		List<Promotion> promotions = core.queryUserActivity(user);
 
-		assertEquals(4, activityEntries.size());
+		assertEquals(4, promotions.size());
 
 		core.persistStatements(semantics.makeTagging(Config.getXmppUserId(), knownSubject, "arandomtag"), true);
 		core.dumpStore();
 
-		activityEntries = core.queryUserActivity(user);
+		promotions = core.queryUserActivity(user);
 
-		assertEquals(5, activityEntries.size());
+		assertEquals(5, promotions.size());
 
 		SemanticCore.getInstance().persistStatements(semantics.makeTagging("xmpp://anotheruser@example.com", knownSubject, "arandomtag"), true);
-		activityEntries = core.queryUserActivity("xmpp://anotheruser@example.com");
+		promotions = core.queryUserActivity("xmpp://anotheruser@example.com");
 
-		assertEquals(1, activityEntries.size());
+		assertEquals(1, promotions.size());
 
 		ActivityFeed activityFeed = new ActivityFeed("TAG");
-		activityFeed.addEntries(activityEntries);
+		activityFeed.addEntries(promotions);
 		System.out.println(activityFeed.toString());
 
 	}
@@ -144,17 +144,17 @@ public class SemanticCoreTest {
 		core.clear();
 		core.persistStatements(semantics.constructDemoMessageModel(), true);
 
-		List<ActivityEntry> activityEntries = core.queryTagActivity(tag);
+		List<Promotion> promotions = core.queryTagActivity(tag);
 
-		assertEquals(0, activityEntries.size());
+		assertEquals(0, promotions.size());
 
 		SemanticCore.getInstance().persistStatements(semantics.makeTagging("xmpp://anotheruser@example.com", knownSubject, tag), true);
-		activityEntries = core.queryTagActivity(tag);
+		promotions = core.queryTagActivity(tag);
 
-		assertEquals(1, activityEntries.size());
+		assertEquals(1, promotions.size());
 
 		ActivityFeed activityFeed = new ActivityFeed(tag);
-		activityFeed.addEntries(activityEntries);
+		activityFeed.addEntries(promotions);
 		System.out.println(activityFeed.toString());
 
 	}

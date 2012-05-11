@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import socio.Config;
+import socio.model.Promotion;
 
 import com.sun.syndication.feed.synd.SyndContent;
 import com.sun.syndication.feed.synd.SyndContentImpl;
@@ -58,27 +59,27 @@ public class ActivityFeed {
 		syndEntries = new ArrayList<SyndEntry>();
 	}
 
-	public void addEntry(ActivityEntry activityEntry) {
+	public void addEntry(Promotion promotion) {
 		SyndEntry entry = new SyndEntryImpl();
 
-		entry.setTitle(activityEntry.getResource());
-		entry.setLink(activityEntry.getResource());
-		entry.setPublishedDate(activityEntry.getDate());
+		entry.setTitle(promotion.getResource());
+		entry.setLink(promotion.getResource());
+		entry.setPublishedDate(promotion.getDate());
 
-		if (!activityEntry.getUser().equals("")) {
+		if (!promotion.getUser().equals("")) {
 			SyndContent description = new SyndContentImpl();
 			description = new SyndContentImpl();
 			description.setType("text/plain");
-			description.setValue(activityEntry.toString());
+			description.setValue(promotion.toString());
 			entry.setDescription(description);
 		}
 
 		syndEntries.add(entry);
 	}
 
-	public void addEntries(List<ActivityEntry> activityEntries) {
-		for (ActivityEntry activityEntry : activityEntries) {
-			addEntry(activityEntry);
+	public void addEntries(List<Promotion> promotions) {
+		for (Promotion promotion : promotions) {
+			addEntry(promotion);
 		}
 	}
 

@@ -1,4 +1,4 @@
-package socio.rss;
+package socio.model;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -6,9 +6,9 @@ import java.util.Date;
 
 import org.apache.log4j.Logger;
 
-public class ActivityEntry {
+public class Promotion {
 
-	private final static Logger LOGGER = Logger.getLogger(ActivityEntry.class);
+	private final static Logger LOGGER = Logger.getLogger(Promotion.class);
 	private final static DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,S");
 
 	private String resource;
@@ -16,13 +16,13 @@ public class ActivityEntry {
 	private String user;
 	private String tag;
 
-	public ActivityEntry(String resource, String date, String user) {
+	public Promotion(String resource, String date, String user) {
 		setResource(resource);
 		setDate(date);
 		setUser(user);
 	}
 
-	public ActivityEntry(String resource, String date, String user, String tag) {
+	public Promotion(String resource, String date, String user, String tag) {
 		setResource(resource);
 		setDate(date);
 		setUser(user);

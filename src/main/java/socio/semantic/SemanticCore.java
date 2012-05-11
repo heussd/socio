@@ -10,12 +10,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Observable;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 import socio.Config;
-import socio.rss.ActivityEntry;
+import socio.model.Promotion;
 import socio.xmpp.XmppClient;
 
 import com.hp.hpl.jena.query.Query;
@@ -36,7 +37,7 @@ import com.hp.hpl.jena.rdf.model.Resource;
  * @author th
  * 
  */
-public class SemanticCore {
+public class SemanticCore extends Observable {
 
 	/**
 	 * Implementation of a performance critical, synchronized singleton pattern
@@ -214,12 +215,15 @@ public class SemanticCore {
 		if (!model.isEmpty()) {
 			rdfStore.add(model);
 			persistStore(true);
+			setChanged();
 
 			if (!silent) {
 				XmppClient.getInstance().broadcast(semantics.constructExportModel(model));
 			} else {
 				logger.debug("Newly imported model will not be broadcasted!");
 			}
+
+			notifyObservers(model);
 		} else {
 			logger.debug("Model was empty, nothing to persist.");
 		}
@@ -572,8 +576,8 @@ public class SemanticCore {
 		return result;
 	}
 
-	public List<ActivityEntry> queryTagActivity(String tag) {
-		List<ActivityEntry> activityEntries = new ArrayList<ActivityEntry>();
+	public List<Promotion> queryTagActivity(String tag) {
+		List<Promotion> promotions = new ArrayList<Promotion>();
 		Query query = semantics.buildTagActivityQuery(tag);
 
 		QueryExecution qexec = null;
@@ -589,8 +593,8 @@ public class SemanticCore {
 				String date = rb.get("date").toString();
 				String user = rb.get("user").toString();
 
-				ActivityEntry activityEntry = new ActivityEntry(resource, date, user);
-				activityEntries.add(activityEntry);
+				Promotion promotion = new Promotion(resource, date, user);
+				promotions.add(promotion);
 			}
 		} catch (Exception e) {
 			logger.error("Error while executing query:", e);
@@ -598,11 +602,11 @@ public class SemanticCore {
 			if (qexec != null)
 				qexec.close();
 		}
-		return activityEntries;
+		return promotions;
 	}
 
-	public List<ActivityEntry> queryUserActivity(String user) {
-		List<ActivityEntry> activityEntries = new ArrayList<ActivityEntry>();
+	public List<Promotion> queryUserActivity(String user) {
+		List<Promotion> promotions = new ArrayList<Promotion>();
 		Query query = semantics.buildUserActivityQuery(user);
 
 		QueryExecution qexec = null;
@@ -618,8 +622,8 @@ public class SemanticCore {
 				String date = rb.get("date").toString();
 				String tag = rb.get("tagname").toString();
 
-				ActivityEntry activityEntry = new ActivityEntry(resource, date, tag);
-				activityEntries.add(activityEntry);
+				Promotion promotion = new Promotion(resource, date, tag);
+				promotions.add(promotion);
 			}
 		} catch (Exception e) {
 			logger.error("Error while executing query:", e);
@@ -627,15 +631,15 @@ public class SemanticCore {
 			if (qexec != null)
 				qexec.close();
 		}
-		return activityEntries;
+		return promotions;
 	}
 
-	public List<ActivityEntry> queryCommunityActivity() {
+	public List<Promotion> queryCommunityActivity() {
 		return queryCommunityActivity(Config.getXmppUserId());
 	}
 
-	public List<ActivityEntry> queryCommunityActivity(String xmppUserId) {
-		List<ActivityEntry> activityEntries = new ArrayList<ActivityEntry>();
+	public List<Promotion> queryCommunityActivity(String xmppUserId) {
+		List<Promotion> promotions = new ArrayList<Promotion>();
 		Query query = semantics.buildCommunityActivityQuery(xmppUserId);
 
 		QueryExecution qexec = null;
@@ -652,8 +656,8 @@ public class SemanticCore {
 				String tag = rb.get("tagname").toString();
 				String user = rb.get("user").toString();
 
-				ActivityEntry activityEntry = new ActivityEntry(resource, date, user, tag);
-				activityEntries.add(activityEntry);
+				Promotion promotion = new Promotion(resource, date, user, tag);
+				promotions.add(promotion);
 			}
 		} catch (Exception e) {
 			logger.error("Error while executing query:", e);
@@ -661,7 +665,7 @@ public class SemanticCore {
 			if (qexec != null)
 				qexec.close();
 		}
-		return activityEntries;
+		return promotions;
 	}
 
 	public Suggestions search(String input) {
@@ -688,4 +692,5 @@ public class SemanticCore {
 		}
 		return suggestions;
 	}
+
 }

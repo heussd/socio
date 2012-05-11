@@ -3,10 +3,13 @@ package socio.semantic;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import socio.Config;
+import socio.model.Promotion;
 
 import com.hp.hpl.jena.rdf.model.Model;
 
@@ -40,6 +43,15 @@ public class SemanticsTest {
 		model.write(System.out, Semantics.RDF_EXPORT_FORMAT);
 		assertTrue(model.isEmpty());
 
+	}
+	
+	
+	@Test
+	public void testExtractActivityEntries() {
+		List<Promotion> promotions = semantics.extractActivityEntries(semantics.constructDemoMessageModel());
+
+		Promotion promotion = promotions.get(0);
+		System.out.println(promotion.getResource());
 	}
 
 }

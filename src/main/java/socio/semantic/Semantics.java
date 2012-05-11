@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.helpers.ISO8601DateFormat;
 
 import socio.Config;
+import socio.model.Promotion;
 
 import com.hp.hpl.jena.ontology.Individual;
 import com.hp.hpl.jena.ontology.OntModel;
@@ -20,6 +21,8 @@ import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QueryFactory;
+import com.hp.hpl.jena.query.QuerySolution;
+import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.Syntax;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -417,4 +420,42 @@ public class Semantics {
 		return QueryFactory.parse(query, queryString, null, Syntax.syntaxARQ);
 	}
 
+	public Query buildActivityQuery() {
+		Query query = QueryFactory.make();
+		query.setPrefixMapping(prefixMapping);
+
+		String queryString = queries.getProperty("query.activity.all");
+		logger.debug("Query is " + queryString);
+		return QueryFactory.parse(query, queryString, null, Syntax.syntaxSPARQL);
+	}
+
+	public List<Promotion> extractActivityEntries(Model model) {
+		List<Promotion> promotions = new ArrayList<Promotion>();
+		Query query = buildActivityQuery();
+
+		QueryExecution qexec = null;
+		try {
+			qexec = QueryExecutionFactory.create(query, model);
+			ResultSet results = qexec.execSelect();
+
+			for (; results.hasNext();) {
+				QuerySolution rb = results.nextSolution();
+
+				logger.debug("Query result: " + rb);
+				String resource = rb.get("url").toString();
+				String date = rb.get("date").toString();
+				String tag = rb.get("tagname").toString();
+				String user = rb.get("user").toString();
+
+				Promotion promotion = new Promotion(resource, date, user, tag);
+				promotions.add(promotion);
+			}
+		} catch (Exception e) {
+			logger.error("Error while executing query:", e);
+		} finally {
+			if (qexec != null)
+				qexec.close();
+		}
+		return promotions;
+	}
 }
