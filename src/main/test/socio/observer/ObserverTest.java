@@ -15,8 +15,6 @@ import socio.model.Promotion;
 import socio.semantic.SemanticCore;
 import socio.semantic.Semantics;
 
-import com.hp.hpl.jena.rdf.model.Model;
-
 public class ObserverTest {
 
 	private Semantics semantics;
@@ -38,13 +36,14 @@ public class ObserverTest {
 
 			public Boolean wasNotified = false;
 
+			@SuppressWarnings("unchecked")
 			@Override
 			public void update(Observable o, Object arg) {
 				if (o instanceof SemanticCore) {
 					wasNotified = true;
 					System.out.println(arg);
 
-					List<Promotion> promotions = semantics.extractActivityEntries((Model) arg);
+					List<Promotion> promotions = (List<Promotion>) arg;
 					System.out.println(promotions.get(0).getResource());
 					assertEquals("https://www.fbi.h-da.de/", promotions.get(0).getResource());
 				}
